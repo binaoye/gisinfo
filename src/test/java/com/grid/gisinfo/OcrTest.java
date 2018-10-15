@@ -6,7 +6,7 @@ public class OcrTest {
 
     @Test
     public void ocrTest() {
-        String[] path = {"F:\\tess\\test3.jpg"};
+        String[] path = {"src/main/resources/testdata/test.jpg"};
         IDCardOcr ocr = new IDCardOcr(path);
         ocr.recongnize();
         System.out.print("测试成功");

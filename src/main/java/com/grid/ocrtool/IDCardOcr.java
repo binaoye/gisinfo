@@ -17,20 +17,30 @@ public class IDCardOcr {
     private IDCardInfo[] outputs;
     private float[] confidence;
     private Map<String, cutZone> zones;
-
+    private String prepath;
     public IDCardOcr(String[] inputs) {
         this.instance = new Tesseract();
         this.instance.setLanguage("chi_sim");
-        this.instance.setDatapath("C:\\Program Files (x86)\\Tesseract-OCR\\tessdata");
+//        this.instance.setDatapath("C:\\Program Files (x86)\\Tesseract-OCR\\tessdata");
+        String os = System.getProperty("os.name");
+        if(os.toLowerCase().startsWith("win")) {
+            this.prepath = "C:\\Users\\Administrator\\Desktop";
+            this.instance.setDatapath("C:\\Program Files (x86)\\Tesseract-OCR\\tessdata");
+        } else {
+            this.prepath = "/home/xiaoke/terhome/";
+            this.instance.setDatapath("/usr/share/tesseract-ocr/tessdata");
+        }
+
         this.inputs = inputs;
         //生成切割识别区域
         genCutZones();
+
     }
 
     void genCutZones() {
         Map<String, cutZone> zones = new HashMap<String, cutZone>();
         // 号码区域
-        cutZone number = new cutZone(0.0, 0.8, 0.2, 1.0);
+        cutZone number = new cutZone(0.0, 0.75, 0.2, 1.0);
         zones.put("number", number);
         // 住址区域
         cutZone address = new cutZone(0.0, 0.48, 0.22, 0.65);
@@ -39,7 +49,7 @@ public class IDCardOcr {
         cutZone birth = new cutZone(0.0, 0.36, 0.12, 0.65);
         zones.put("birth", birth);
         // 性别区域
-        cutZone sex = new cutZone(0.0, 0.24, 0.12, 0.65);
+        cutZone sex = new cutZone(0.0, 0.20, 0.12, 0.65);
         zones.put("sex", sex);
         // 姓名区域
         cutZone name = new cutZone(0.0, 0.10, 0.13, 0.5);
@@ -53,10 +63,15 @@ public class IDCardOcr {
             System.out.print(IDCardOcr.class.getName() + "开始识别：" + path);
             // 截取各个部分
             Map<String, BufferedImage> parts = getLocates(path);
+            System.out.println("开始识别切割图像");
             for(Map.Entry<String, BufferedImage> entry: parts.entrySet()) {
                 try {
+                    System.out.println("测试ocr" + entry.getKey());
                     String result = this.instance.doOCR(entry.getValue());
-                    ImageIO.write(entry.getValue(), "jpg", new File("F:\\tess\\" + entry.getKey() + ".jpg") );
+                    System.out.println("doocr成功");
+                    String savePath = this.prepath + "/" + entry.getKey() + ".jpg";
+                    ImageIO.write(entry.getValue(), "jpg", new File(savePath) );
+                    System.out.println("存储路径变成"+ savePath);
                     System.out.print("当前部分为" + entry.getKey() + "识别结果为：" + result);
                 } catch (Exception e) {
                     System.out.println("当前部分为" + entry.getKey() + "识别失败");
@@ -95,6 +110,7 @@ public class IDCardOcr {
                 result.put(entry.getKey(), img);
             }
         } catch (IOException e) {
+            System.out.println("读取切割文件失败");
             e.printStackTrace();
         }
         return result;
