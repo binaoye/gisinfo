@@ -52,13 +52,13 @@ public class IDCardOcr {
         cutZone number = new cutZone(0.35, 0.75, 0.2, 0.65);
         zones.put("number", number);
         // 住址区域
-        cutZone address = new cutZone(0.05, 0.48, 0.22, 0.55);
+        cutZone address = new cutZone(0.05, 0.48, 0.3, 0.55);
         zones.put("address", address);
         // 生日区域
         cutZone birth = new cutZone(0.05, 0.36, 0.14, 0.5);
         zones.put("birth", birth);
         // 性别区域
-        cutZone sex = new cutZone(0.05, 0.20, 0.14, 0.5);
+        cutZone sex = new cutZone(0.05, 0.20, 0.2, 0.5);
         zones.put("sex", sex);
         // 姓名区域
         cutZone name = new cutZone(0.05, 0.10, 0.13, 0.5);
@@ -190,7 +190,8 @@ public class IDCardOcr {
     public String deluseless(String str) {
         String[] delwords = {
                 ",", "|", "/", "_", "-", "+", "^", "#", "!", "~", "$", "%", "*",
-                "(", ")", "[", "]", "{", "}", ";", ":", "'", "\"","<", ">", "?"
+                "(", ")", "[", "]", "{", "}", ";", ":", "'", "\"","<", ">", "?",
+                "，","|","《","》","？","。","；","：","‘","“","/","￥","（","）","~","·"
         };
         for(String st: delwords) {
             str = str.replace(st, "");
