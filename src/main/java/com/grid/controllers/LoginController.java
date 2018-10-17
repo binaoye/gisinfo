@@ -1,5 +1,6 @@
 package com.grid.controllers;
 
+import com.grid.ocrtool.IDCardInfo;
 import com.grid.ocrtool.IDCardOcr;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ public class LoginController {
 
     @RequestMapping("/upload")
     @ResponseBody
-    public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public Object handleFileUpload(@RequestParam("file") MultipartFile file) {
         if (!file.isEmpty()) {
             System.out.println("收到文件"+ file.getName());
             try {
@@ -49,12 +50,20 @@ public class LoginController {
                 BufferedOutputStream out = new BufferedOutputStream(
                         new FileOutputStream(new File(
                                 file.getOriginalFilename())));
-                System.out.println(file.getName());
+                System.out.println("传入文件名"+ file.getOriginalFilename());
                 out.write(file.getBytes());
                 File f = null;
                 f=File.createTempFile("tmp", null);
                 file.transferTo(f);
-                ocr.recongnize(f);
+                IDCardInfo info = ocr.recongnize(f);
+                info.setFilename(file.getOriginalFilename());
+                System.out.println("识别到结果");
+                System.out.printf("姓名：%s\n", info.getName());
+                System.out.printf("性别：%s\n", info.getSex());
+                System.out.printf("生日：%s\n", info.getBirth());
+                System.out.printf("民族：%s\n", info.getNation());
+                System.out.printf("住址：%S\n", info.getLocation());
+                System.out.printf("号码：%s\n", info.getNumber());
                 out.flush();
                 out.close();
             } catch (FileNotFoundException e) {
