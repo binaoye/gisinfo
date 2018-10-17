@@ -3,6 +3,7 @@ package com.grid.ocrtool;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import org.springframework.context.annotation.Bean;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,9 +20,13 @@ public class IDCardOcr {
     private Map<String, cutZone> zones;
     private String prepath;
     public IDCardOcr(String[] inputs) {
+        this.init();
+        this.inputs = inputs;
+    }
+
+    private void init() {
         this.instance = new Tesseract();
         this.instance.setLanguage("chi_sim");
-//        this.instance.setDatapath("C:\\Program Files (x86)\\Tesseract-OCR\\tessdata");
         String os = System.getProperty("os.name");
         if(os.toLowerCase().startsWith("win")) {
             this.prepath = "C:\\Users\\Administrator\\Desktop";
@@ -30,29 +35,30 @@ public class IDCardOcr {
             this.prepath = "/home/xiaoke/terhome/";
             this.instance.setDatapath("/usr/share/tesseract-ocr/tessdata");
         }
-
-        this.inputs = inputs;
         //生成切割识别区域
         genCutZones();
+    }
 
+    public IDCardOcr() {
+        this.init();
     }
 
     void genCutZones() {
         Map<String, cutZone> zones = new HashMap<String, cutZone>();
         // 号码区域
-        cutZone number = new cutZone(0.0, 0.75, 0.2, 1.0);
+        cutZone number = new cutZone(0.25, 0.75, 0.2, 0.65);
         zones.put("number", number);
         // 住址区域
-        cutZone address = new cutZone(0.0, 0.48, 0.22, 0.65);
+        cutZone address = new cutZone(0.05, 0.48, 0.22, 0.65);
         zones.put("address", address);
         // 生日区域
-        cutZone birth = new cutZone(0.0, 0.36, 0.12, 0.65);
+        cutZone birth = new cutZone(0.05, 0.36, 0.12, 0.65);
         zones.put("birth", birth);
         // 性别区域
-        cutZone sex = new cutZone(0.0, 0.20, 0.12, 0.65);
+        cutZone sex = new cutZone(0.05, 0.20, 0.12, 0.65);
         zones.put("sex", sex);
         // 姓名区域
-        cutZone name = new cutZone(0.0, 0.10, 0.13, 0.5);
+        cutZone name = new cutZone(0.05, 0.10, 0.13, 0.5);
         zones.put("name", name);
 
         this.zones = zones;
@@ -63,23 +69,45 @@ public class IDCardOcr {
             System.out.print(IDCardOcr.class.getName() + "开始识别：" + path);
             // 截取各个部分
             Map<String, BufferedImage> parts = getLocates(path);
-            System.out.println("开始识别切割图像");
-            for(Map.Entry<String, BufferedImage> entry: parts.entrySet()) {
-                try {
-                    System.out.println("测试ocr" + entry.getKey());
-                    String result = this.instance.doOCR(entry.getValue());
-                    System.out.println("doocr成功");
-                    String savePath = this.prepath + "/" + entry.getKey() + ".jpg";
-                    ImageIO.write(entry.getValue(), "jpg", new File(savePath) );
-                    System.out.println("存储路径变成"+ savePath);
-                    System.out.print("当前部分为" + entry.getKey() + "识别结果为：" + result);
-                } catch (Exception e) {
-                    System.out.println("当前部分为" + entry.getKey() + "识别失败");
-                    e.printStackTrace();
-                }
-            }
-
+            readParts(parts);
         }
+    }
+
+    public IDCardInfo readParts(Map<String, BufferedImage> parts) {
+        System.out.println("开始识别切割图像");
+        IDCardInfo info = new IDCardInfo();
+        for(Map.Entry<String, BufferedImage> entry: parts.entrySet()) {
+            try {
+                System.out.println("测试ocr" + entry.getKey());
+                String result = this.instance.doOCR(entry.getValue());
+                System.out.println("doocr成功");
+                // 处理result
+
+                String savePath = this.prepath + "/" + entry.getKey() + ".jpg";
+                ImageIO.write(entry.getValue(), "jpg", new File(savePath) );
+                System.out.println("存储路径变成"+ savePath);
+                System.out.print("当前部分为" + entry.getKey() + "识别结果为：" + result);
+            } catch (Exception e) {
+                System.out.println("当前部分为" + entry.getKey() + "识别失败");
+                e.printStackTrace();
+            }
+        }
+        return info;
+    }
+
+//    private IDCardInfo processPart(IDCardInfo info, String result, String key) {
+//        switch (key) {
+//            case "number":
+//                // 从左至右开始遍历, 如果是数字或x继续, 否则结束
+//
+//
+//        }
+//    }
+
+    public IDCardInfo recongnize(File file) {
+        Map<String, BufferedImage> parts = getLocates(file);
+        IDCardInfo info = readParts(parts);
+        return info;
     }
 
     private BufferedImage cut(cutZone zone, BufferedImage image) {
@@ -90,19 +118,13 @@ public class IDCardOcr {
         int[] simgRgb = new int[newWidth * newHeight];
         int x = (int) (sWidth * zone.getX());
         int y = (int) (sHeight * zone.getY());
-        System.out.printf("尝试切割图像: %d, %d, %d, %d, %d, %d",sHeight, sWidth,x, y, newHeight, newWidth);
+        System.out.printf("尝试切割图像: %d, %d, %d, %d, %d, %d\n",sHeight, sWidth,x, y, newHeight, newWidth);
         BufferedImage newImage = image.getSubimage(x, y, newWidth,newHeight);
-//        image.getRGB(x, y, newWidth, newHeight, simgRgb, 0, newWidth);
-//        BufferedImage newImage = new BufferedImage(newWidth, newHeight,
-//                BufferedImage.TYPE_INT_ARGB);
-//        newImage.setRGB(0, 0, newWidth, newHeight, simgRgb, 0, newWidth);
         return newImage;
     }
 
-    private Map<String, BufferedImage> getLocates(String path) {
+    private Map<String, BufferedImage> getLocates(File file) {
         Map<String, BufferedImage> result = new HashMap<String, BufferedImage>();
-        // 读取待切割的图像
-        File file = new File(path);
         try {
             BufferedImage textImage = ImageIO.read(file);
             for(Map.Entry<String, cutZone> entry : this.zones.entrySet()) {
@@ -114,6 +136,27 @@ public class IDCardOcr {
             e.printStackTrace();
         }
         return result;
+    }
+
+
+
+    private Map<String, BufferedImage> getLocates(String path) {
+//        Map<String, BufferedImage> result = new HashMap<String, BufferedImage>();
+        // 读取待切割的图像
+        File file = new File(path);
+        Map<String, BufferedImage> result = getLocates(file);
+        return result;
+    }
+
+    public String deluseless(String str) {
+        String[] delwords = {
+                ",", "|", "/", "_", "-", "+", "^", "#", "!", "~", "$", "%", "*",
+                "(", ")", "[", "]", "{", "}", ";", ":", "'", "\"","<", ">", "?"
+        };
+        for(String st: delwords) {
+            str = str.replace(st, "");
+        }
+        return str;
     }
 
 
@@ -164,3 +207,4 @@ class cutZone{
         this.width = width;
     }
 }
+
