@@ -15,7 +15,7 @@ import java.io.*;
 
 @RestController
 public class LoginController {
-    private IDCardOcr ocr = new IDCardOcr();
+    private IDCardOcr ocrcc = new IDCardOcr();
 //    @RequestMapping(value = "/hello", method = RequestMethod.GET)
     @RequestMapping("/hello")
     public String hello() {
@@ -38,8 +38,11 @@ public class LoginController {
     @RequestMapping("/upload")
     @ResponseBody
     public Object handleFileUpload(@RequestParam("file") MultipartFile file) {
+        IDCardInfo info = new IDCardInfo();
+        IDCardOcr ocr = new IDCardOcr();
         if (!file.isEmpty()) {
             System.out.println("收到文件"+ file.getName());
+
             try {
                 /*
                  * 这段代码执行完毕之后，图片上传到了工程的跟路径； 大家自己扩散下思维，如果我们想把图片上传到
@@ -55,7 +58,7 @@ public class LoginController {
                 File f = null;
                 f=File.createTempFile("tmp", null);
                 file.transferTo(f);
-                IDCardInfo info = ocr.recongnize(f);
+                info = ocr.recongnize(f);
                 info.setFilename(file.getOriginalFilename());
                 System.out.println("识别到结果");
                 System.out.printf("姓名：%s\n", info.getName());
@@ -68,16 +71,29 @@ public class LoginController {
                 out.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                return "上传失败," + e.getMessage();
+                info = new IDCardInfo();
+                info.setErrmsg("图片不存在");
+                return info;
             } catch (IOException e) {
-                e.printStackTrace();
-                return "上传失败," + e.getMessage();
+                info = new IDCardInfo();
+                info.setErrmsg("上传失败");
+                return info;
             }
 
-            return "上传成功";
+            return info;
 
         } else {
-            return "上传失败，因为文件是空的.";
+            info = new IDCardInfo();
+            info.setErrmsg("图片不存在");
+            return info;
         }
+    }
+
+    @RequestMapping("/uptest")
+    @ResponseBody
+    public Object handleTest() {
+        IDCardInfo info = new IDCardInfo();
+        info.setErrmsg("测试成功");
+        return info;
     }
 }

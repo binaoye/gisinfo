@@ -43,13 +43,14 @@ public class IDCardOcr {
     }
 
     public IDCardOcr() {
+        System.out.println("初始化ID OCR");
         this.init();
     }
 
     void genCutZones() {
         Map<String, cutZone> zones = new HashMap<String, cutZone>();
         // 号码区域
-        cutZone number = new cutZone(0.35, 0.75, 0.2, 0.65);
+        cutZone number = new cutZone(0.25, 0.75, 0.2, 0.65);
         zones.put("number", number);
         // 住址区域
         cutZone address = new cutZone(0.05, 0.48, 0.3, 0.55);
@@ -58,7 +59,7 @@ public class IDCardOcr {
         cutZone birth = new cutZone(0.05, 0.36, 0.14, 0.5);
         zones.put("birth", birth);
         // 性别区域
-        cutZone sex = new cutZone(0.05, 0.20, 0.2, 0.5);
+        cutZone sex = new cutZone(0.05, 0.20, 0.15, 0.5);
         zones.put("sex", sex);
         // 姓名区域
         cutZone name = new cutZone(0.05, 0.10, 0.13, 0.5);

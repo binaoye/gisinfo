@@ -10,6 +10,17 @@ public class IDCardInfo {
     private String errmsg;
     private String filename;
 
+    public IDCardInfo() {
+        this.setErrmsg("");
+        this.setFilename("");
+        this.setBirth("");
+        this.setLocation("");
+        this.setName("");
+        this.setNation("");
+        this.setNumber("");
+        this.setSex("");
+    }
+
     public String getErrmsg() {
         return errmsg;
     }
