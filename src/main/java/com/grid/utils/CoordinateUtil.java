@@ -126,15 +126,15 @@ public class CoordinateUtil {
 //        39.9179897426,116.3901633017
 
         Coordinate coordinate = new Coordinate();
-        //39.9118667621,116.3836938539
-        coordinate.setLongitude(39.9104924347);
-        coordinate.setLatitude(116.3774872222);
+        //34.42257,104.90776
+        coordinate.setLongitude(104.90776);
+        coordinate.setLatitude(34.42257);
 
 
         Coordinate marsCoordinate = transform2Mars(coordinate);
-        Coordinate bdCoordinate = bdEncrypt(marsCoordinate);
-        System.out.println(bdCoordinate.getLongitude());
-        System.out.println(bdCoordinate.getLatitude());
+//        Coordinate bdCoordinate = bdEncrypt(marsCoordinate);
+        System.out.println(marsCoordinate.getLongitude());
+        System.out.println(marsCoordinate.getLatitude());
     }
 }
 
