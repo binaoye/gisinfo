@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = {"com.grid.service","com.grid.dao","com.grid.controllers"})
 public class GisinfoApplication {
 
 	public static void main(String[] args) {
