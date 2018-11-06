@@ -1,6 +1,7 @@
 package com.grid.service;
 
 import com.grid.Entity.CityEntity;
+import com.grid.Entity.GeoCache;
 import com.grid.Entity.LineEntity;
 import com.grid.dao.CItyDao;
 import com.grid.dao.LineDao;
@@ -37,5 +38,10 @@ public class LineServiceImpl implements LineService {
     @Override
     public Map<String, double[][]> QueryCityLinePoints(String city) {
         return this.ldao.QueryCityLinePoints(city);
+    }
+
+    @Override
+    public GeoCache GeoEncode(String city, String county, String street, String village) {
+        return this.cdao.GeoEncode(city, county, street, village);
     }
 }
