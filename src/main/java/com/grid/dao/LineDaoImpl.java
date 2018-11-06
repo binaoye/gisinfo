@@ -64,7 +64,7 @@ public class LineDaoImpl implements LineDao {
             double[] nss = new double[2];
             nss[0] = point.getLat();
             nss[1] = point.getLng();
-            System.out.println("["+point.getLat()+", "+ point.getLng()+"],");
+//            System.out.println("["+point.getLat()+", "+ point.getLng()+"],");
             arr.add(nss);
         }
         int size=arr.size();

@@ -14,7 +14,6 @@ public class csvUtil {
         Map<String, List> village = new HashMap<String,List>();
         List cts = new ArrayList();
         List ccounts = new ArrayList();
-        List stres = new ArrayList();
         try {
             ArrayList<String[]> csvList = new ArrayList<String[]>();
 
@@ -31,7 +30,16 @@ public class csvUtil {
                 //打印每一行的数据
                 cts.add(csvList.get(row)[0]);
                 ccounts.add(csvList.get(row)[1]);
-                stres.add(csvList.get(row)[2]);
+                if(street.containsKey(csvList.get(row)[1])) {
+                    List dsf = street.get(csvList.get(row)[1]);
+                    dsf.add(csvList.get(row)[2]);
+                    street.put(csvList.get(row)[1], dsf);
+                }else {
+                    List ls = new ArrayList();
+                    ls.add(csvList.get(row)[2]);
+                    street.put(csvList.get(row)[1],ls);
+                }
+
                 if (village.containsKey(csvList.get(row)[2])) {
                     List lll = village.get(csvList.get(row)[2]);
                     lll.add(csvList.get(row)[3]);
@@ -48,10 +56,8 @@ public class csvUtil {
         }
         cts = reduce(cts);
         ccounts = reduce(ccounts);
-        stres = reduce(stres);
         city.put("city", cts);
         county.put("county", ccounts);
-        street.put("street", stres);
         Map<String,Map<String,List>> result = new HashMap<String,Map<String,List>>();
         result.put("city",city);
         result.put("county",county);

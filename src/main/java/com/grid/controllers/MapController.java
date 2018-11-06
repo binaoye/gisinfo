@@ -37,7 +37,7 @@ public class MapController {
         String county = travel(posi, countys);
         posi = posi.replace(county, "");
         // 抽取街道或乡镇
-        List streets = this.cache.get("street").get("street");
+        List streets = this.cache.get("street").get(county);
         String street = travel(posi,streets);
         if (street.equals("")) {
             if(posi.contains("乡")){
@@ -52,6 +52,7 @@ public class MapController {
 
         posi = posi.replace(street, "");
         posi = posi.replace("甘肃省", "");
+        posi = posi.replace("行政", "");
         String vil = posi;
         if (posi.contains("社区")) {
             String[] sds = posi.split("社区");
@@ -64,6 +65,9 @@ public class MapController {
         // 抽取村
         List villages = this.cache.get("village").get(street);
         String village = travel(vil, villages);
+        if((village.equals(""))&(vil.contains("家"))) {
+            village = travel(vil.replace("家", ""), villages);
+        }
         GeoCache ca = this.lins.GeoEncode(city,county,street,village);
         result.put("lat", ca.getLatitude());
         result.put("lng", ca.getLongitude());

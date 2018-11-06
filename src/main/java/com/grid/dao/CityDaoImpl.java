@@ -48,7 +48,6 @@ public class CityDaoImpl implements CItyDao {
             @Override
             public GeoCache mapRow(ResultSet rs, int rowNum) throws SQLException {
                 GeoCache cc = new GeoCache();
-                System.out.println("0000"+rs.first());
                 cc.setLatitude(rs.getDouble("lat_float"));
                 cc.setLongitude(rs.getDouble("lng_float"));
 //                cc.setID(rs.getString("ssds"));
