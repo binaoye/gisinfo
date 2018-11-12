@@ -1,15 +1,19 @@
 package com.grid.dao;
 
 import com.grid.Entity.LineEntity;
+import com.grid.Entity.LineInspector;
 import com.grid.Entity.LinePoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.sound.sampled.Line;
+import java.sql.*;
 import java.util.*;
 
 @Repository
@@ -83,6 +87,60 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, double[][]> QueryCityLinePoints(String city) {
         return null;
+    }
+
+    @Override
+    public List<LineInspector> QueryLineInspector(String line) {
+        String sqlFormat = "SELECT * FROM line_inspector WHERE line='%s'";
+        String sql = String.format(sqlFormat, line);
+        List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
+            @Override
+            public LineInspector mapRow(ResultSet rs, int i) throws SQLException {
+                LineInspector li = new LineInspector(rs.getString("name"),
+                        rs.getString("birth"), rs.getString("nation"), rs.getString("sex"),
+                        rs.getString("address"), rs.getString("code"), rs.getString("line"),
+                        rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
+                );
+                li.setId(rs.getInt("id"));
+                li.setId(0);
+                return li;
+            }
+        });
+
+        return list;
+    }
+
+    @Override
+    public Integer AddUser(LineInspector user) {
+        String sqlFormat = "INSERT INTO line_inspector( name,birth,nation,sex,address,code, line, inside, lat, lng)" +
+                " VALUES('%s', '%s', '%s','%s', '%s', '%s', '%s', %d, %f, %f)";
+        String sql = String.format(sqlFormat, user.getName(), user.getBirth(), user.getNation(), user.getSex(), user.getAddress(), user.getCode(), user.getLine(), user.getInside(), user.getLat(), user.getLng());
+        KeyHolder kh = new GeneratedKeyHolder();
+        System.out.println(sql);
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+//                ps.setString(1, "nid");
+//                ps.setInt(1, 0);
+//                ps.setLong(0,0);
+                return ps;
+            }
+        }, kh);
+        int id = kh.getKey().intValue();
+        System.out.println("查询到主键:" + id);
+
+        return id;
+    }
+
+    @Override
+    public void UpdateUser(LineInspector user) {
+
+    }
+
+    @Override
+    public void UserExists(LineInspector user) {
+
     }
 
 

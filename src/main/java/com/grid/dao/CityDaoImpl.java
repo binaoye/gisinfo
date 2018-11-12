@@ -3,21 +3,24 @@ package com.grid.dao;
 import com.grid.Entity.CityEntity;
 import com.grid.Entity.GeoCache;
 import com.grid.Entity.LineEntity;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class CityDaoImpl implements CItyDao {
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    List citys = new ArrayList();
     @Override
     public List<CityEntity> Query() {
         String sql = "SELECT * FROM city";
@@ -60,5 +63,43 @@ public class CityDaoImpl implements CItyDao {
             result = list.get(0);
         }
         return result;
+    }
+
+    @Override
+    public List<String> GetCities() {
+        if (citys.size() > 1 ){
+            return citys;
+        }
+        String sql = "SELECT DISTINCT(city) FROM gps_cache";
+        List<String> list = jdbcTemplate.queryForList(sql, String.class);
+        citys = list;
+        return list;
+    }
+
+    @Override
+    public List<String> GetCounties(String city) {
+        String sqlFormat = "SELECT DISTINCT(county) FROM gps_cache WHERE city='%s'";
+        String sql_county = String.format(sqlFormat, city);
+        System.out.println("sql:" + sql_county);
+        List<String> county_list = jdbcTemplate.queryForList(sql_county, String.class);
+        return county_list;
+    }
+
+    @Override
+    public List<String> GetStreets(String city, String county) {
+        String sqlFormat = "SELECT DISTINCT(street) FROM gps_cache WHERE city='%s' AND county='%s'";
+        String sql = String.format(sqlFormat, city, county);
+        System.out.println("sql：" + sql);
+        List<String> list = jdbcTemplate.queryForList(sql, String.class);
+        return list;
+    }
+
+    @Override
+    public List<String> GetVillages(String city, String county, String street) {
+        String sqlFormat = "SELECT DISTINCT(village) FROM gps_cache WHERE city='%s' AND county='%s' AND street='%s'";
+        String sql = String.format(sqlFormat, city, county, street);
+        System.out.println("sql：" + sql);
+        List<String> list = jdbcTemplate.queryForList(sql, String.class);
+        return list;
     }
 }

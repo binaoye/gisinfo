@@ -178,5 +178,31 @@ public class MapController {
         return result;
     }
 
+    @RequestMapping("/distcalc")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object DistCalc(String city, String county, String street, String village, String line) {
+        Map<String,Object>  result = new HashMap<String, Object>();
+        GeoCache ca = this.lins.GeoEncode(city,county,street,village);
+        result.put("lat", ca.getLatitude());
+        result.put("lng", ca.getLongitude());
+        // 距离判定
+        Map<String,double[][]> points = this.lins.QueryLinePoint(line);
+        double[][] ps = points.get(line);
+        double mindist = 1000000.0;
+        for(double[] poi:ps) {
+            double dist = LocationUtil.getDistance(poi[1],poi[0],ca.getLongitude(),ca.getLatitude());
+            if(dist <= mindist) {
+                mindist = dist;
+            }
+        }
+        if(mindist <= thres) {
+            result.put("result",1);
+        }else {
+            result.put("result",0);
+        }
+        return result;
+    }
+
 
 }

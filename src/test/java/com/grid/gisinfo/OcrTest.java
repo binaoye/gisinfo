@@ -1,7 +1,5 @@
 package com.grid.gisinfo;
 
-import com.grid.ocrtool.IDCardOcr;
-import com.grid.utils.csvUtil;
 import org.junit.Test;
 
 import java.util.Comparator;
