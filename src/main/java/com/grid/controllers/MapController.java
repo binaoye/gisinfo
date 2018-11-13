@@ -86,6 +86,7 @@ public class MapController {
         }else {
             result.put("result",0);
         }
+        result.put("distance", mindist);
         return result;
     }
 
@@ -132,12 +133,12 @@ public class MapController {
 
     public String travel(String input, List list) {
         String result = "";
-        System.out.println(input + list.size());
+//        System.out.println(input + list.size());
         Iterator<String> iterator = list.iterator();
         while(iterator.hasNext()){
             String next = iterator.next();
             if(input.contains(next)&!next.equals("")) {
-                System.out.println("1" + next);
+//                System.out.println("1" + next);
                 return next;
             }
         }
@@ -161,7 +162,7 @@ public class MapController {
                 }
             }
             if (flag1 | flag2) {
-                System.out.println("2" + next);
+//                System.out.println("2" + next);
                 return next;
             }
         }

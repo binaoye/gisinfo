@@ -44,7 +44,9 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, double[][]> QueryLinePoints(String line) {
         //查询线路上所有点
-        String sql = "select a.GTPLXH,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='" + line + "' order by a.GTPLXH asc";
+        String sql = "select a.GTPLXH,b.* from t_sb_zwyc_gt a join" +
+                " t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='" + line + "' order by a.GTPLXH asc";
+        System.out.println("sql:"+ sql);
         List<LinePoint> list = jdbcTemplate.query(sql, new RowMapper<LinePoint>() {
             //映射每行数据
             @Override
@@ -55,7 +57,6 @@ public class LineDaoImpl implements LineDao {
 //                System.out.println(rs.getString("GTPLXH"));
                 return cc;
             }
-
         });
         // 查询所有支线列表
 

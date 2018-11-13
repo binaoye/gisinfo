@@ -29,7 +29,7 @@ public class CityDaoImpl implements CItyDao {
             @Override
             public CityEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
                 CityEntity cc = new CityEntity();
-                System.out.println(rs.first());
+//                System.out.println(rs.first());
                 cc.setID(rs.getString("ssds"));
                 cc.setName(rs.getString("name"));
                 cc.setCenter(rs.getString("center"));
@@ -67,9 +67,9 @@ public class CityDaoImpl implements CItyDao {
 
     @Override
     public List<String> GetCities() {
-        if (citys.size() > 1 ){
-            return citys;
-        }
+//        if (citys.size() > 1 ){
+//            return citys;
+//        }
         String sql = "SELECT DISTINCT(city) FROM gps_cache";
         List<String> list = jdbcTemplate.queryForList(sql, String.class);
         citys = list;
