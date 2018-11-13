@@ -103,7 +103,7 @@ public class LineDaoImpl implements LineDao {
                         rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
                 );
                 li.setId(rs.getInt("id"));
-                li.setId(0);
+//                li.setId(0);
                 li.setDistance(rs.getDouble("distance"));
                 return li;
             }
