@@ -65,4 +65,9 @@ public class LineServiceImpl implements LineService {
     public void UserExists(LineInspector user) {
         ldao.UserExists(user);
     }
+
+    @Override
+    public List<LineInspector> UserDownload(String[] users) {
+        return ldao.DownUsers(users);
+    }
 }

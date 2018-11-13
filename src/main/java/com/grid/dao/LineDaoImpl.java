@@ -103,6 +103,7 @@ public class LineDaoImpl implements LineDao {
                 );
                 li.setId(rs.getInt("id"));
                 li.setId(0);
+                li.setDistance(rs.getDouble("distance"));
                 return li;
             }
         });
@@ -112,9 +113,9 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public Integer AddUser(LineInspector user) {
-        String sqlFormat = "INSERT INTO line_inspector( name,birth,nation,sex,address,code, line, inside, lat, lng)" +
-                " VALUES('%s', '%s', '%s','%s', '%s', '%s', '%s', %d, %f, %f)";
-        String sql = String.format(sqlFormat, user.getName(), user.getBirth(), user.getNation(), user.getSex(), user.getAddress(), user.getCode(), user.getLine(), user.getInside(), user.getLat(), user.getLng());
+        String sqlFormat = "INSERT INTO line_inspector( name,birth,nation,sex,address,code, line, inside, lat, lng, distance)" +
+                " VALUES('%s', '%s', '%s','%s', '%s', '%s', '%s', %d, %f, %f, %f)";
+        String sql = String.format(sqlFormat, user.getName(), user.getBirth(), user.getNation(), user.getSex(), user.getAddress(), user.getCode(), user.getLine(), user.getInside(), user.getLat(), user.getLng(), user.getDistance());
         KeyHolder kh = new GeneratedKeyHolder();
         System.out.println(sql);
         jdbcTemplate.update(new PreparedStatementCreator() {
@@ -141,6 +142,28 @@ public class LineDaoImpl implements LineDao {
     @Override
     public void UserExists(LineInspector user) {
 
+    }
+
+    @Override
+    public List<LineInspector> DownUsers(String[] users) {
+        String sqlFormat = "SELECT * FROM SCYW.line_inspector WHERE id in(%s)";
+        String ids = String.join(",", users);
+        String sql = String.format(sqlFormat, ids);
+        List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
+            @Override
+            public LineInspector mapRow(ResultSet rs, int i) throws SQLException {
+                LineInspector li = new LineInspector(rs.getString("name"),
+                        rs.getString("birth"), rs.getString("nation"), rs.getString("sex"),
+                        rs.getString("address"), rs.getString("code"), rs.getString("line"),
+                        rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
+                );
+                li.setId(rs.getInt("id"));
+                li.setId(0);
+                li.setDistance(rs.getDouble("distance"));
+                return li;
+            }
+        });
+        return list;
     }
 
 

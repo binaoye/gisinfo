@@ -14,4 +14,5 @@ public interface LineDao {
     Integer AddUser(LineInspector user);
     void UpdateUser(LineInspector user);
     void UserExists(LineInspector user);
+    List<LineInspector> DownUsers(String[] users);
 }

@@ -38,6 +38,11 @@ public class GaodeController {
         return result;
     }
 
+    /**
+     * 查询第二级别区划
+     * @param city
+     * @return
+     */
     @RequestMapping("/querycounties")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
@@ -49,7 +54,12 @@ public class GaodeController {
         return result;
     }
 
-
+    /**
+     * 查询第三级别区划
+     * @param city
+     * @param county
+     * @return
+     */
     @RequestMapping("/querystreets")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
@@ -61,6 +71,13 @@ public class GaodeController {
         return result;
     }
 
+    /**
+     * 查询第四级别区划
+     * @param city
+     * @param county
+     * @param street
+     * @return
+     */
     @RequestMapping("/queryvillages")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
@@ -73,11 +90,27 @@ public class GaodeController {
     }
 
 
+    /**
+     * 添加线路人员数据
+     * @param name
+     * @param birth
+     * @param nation
+     * @param sex
+     * @param address
+     * @param code
+     * @param line
+     * @param inside
+     * @param lat
+     * @param lng
+     * @param distance
+     * @return
+     */
     @RequestMapping("/adduser")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
-    public Object AddUser(String name, String birth, String nation, String sex, String address, String code,String line, Integer inside, double lat, double lng) {
+    public Object AddUser(String name, String birth, String nation, String sex, String address, String code,String line, Integer inside, double lat, double lng,double distance) {
         LineInspector li = new LineInspector(name, birth, nation, sex, address, code, line, lat, lng,inside);
+        li.setDistance(distance);
         li.setInside(inside);
         Integer id = lins.AddUser(li);
         Map<String, Object> result = new HashMap<String,Object>();
@@ -85,6 +118,11 @@ public class GaodeController {
         return result;
     }
 
+    /**
+     * 查询线路所有人员
+     * @param line
+     * @return
+     */
     @RequestMapping("/queryinspector")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)

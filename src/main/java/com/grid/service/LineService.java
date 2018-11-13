@@ -18,4 +18,5 @@ public interface LineService {
     Integer AddUser(LineInspector user);
     void UpdateUser(LineInspector user);
     void UserExists(LineInspector user);
+    List<LineInspector> UserDownload(String[] users);
 }

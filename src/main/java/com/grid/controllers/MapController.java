@@ -201,6 +201,7 @@ public class MapController {
         }else {
             result.put("result",0);
         }
+        result.put("distance", mindist);
         return result;
     }
 
