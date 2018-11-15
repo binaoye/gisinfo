@@ -1,7 +1,9 @@
 package com.grid.controllers;
 
+import com.grid.Entity.CityEntity;
 import com.grid.Entity.GeoCache;
 import com.grid.Entity.LineEntity;
+import com.grid.Entity.LineFeature;
 import com.grid.service.LineService;
 import com.grid.utils.LocationUtil;
 import com.grid.utils.csvUtil;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.*;
 
@@ -72,7 +73,7 @@ public class MapController {
         result.put("lat", ca.getLatitude());
         result.put("lng", ca.getLongitude());
         // 距离判定
-        Map<String,double[][]> points = this.lins.QueryLinePoint(line);
+        Map<String,double[][]> points = this.lins.ListLinePoints(line);
         double[][] ps = points.get(line);
         double mindist = 1000000.0;
         for(double[] poi:ps) {
@@ -188,7 +189,7 @@ public class MapController {
         result.put("lat", ca.getLatitude());
         result.put("lng", ca.getLongitude());
         // 距离判定
-        Map<String,double[][]> points = this.lins.QueryLinePoint(line);
+        Map<String,double[][]> points = this.lins.ListLinePoints(line);
         double[][] ps = points.get(line);
         double mindist = 1000000.0;
         for(double[] poi:ps) {
@@ -203,6 +204,26 @@ public class MapController {
             result.put("result",0);
         }
         result.put("distance", mindist);
+        return result;
+    }
+
+    @RequestMapping("/getProvDept")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object GetProvDept() {
+        Map<String,Object>  result = new HashMap<String, Object>();
+        List<CityEntity> cts = lins.GetProvDepts();
+        result.put("result", cts);
+        return result;
+    }
+
+    @RequestMapping("/queryLineFeature")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object QueryLineFeature(String line) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        LineFeature lf = lins.QueryLineFeatures(line);
+        result.put("result", lf);
         return result;
     }
 

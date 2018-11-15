@@ -102,4 +102,22 @@ public class CityDaoImpl implements CItyDao {
         List<String> list = jdbcTemplate.queryForList(sql, String.class);
         return list;
     }
+
+    @Override
+    public List<CityEntity> GetProvDept() {
+        String sql = "SELECT * FROM scyw.t_v_isc_dept where sjdwbm='008df5db70319f73e0508eoabd9b0002' group by dwbm,dwmc";
+        List<CityEntity> list = jdbcTemplate.query(sql, new RowMapper<CityEntity>() {
+            //映射每行数据
+            @Override
+            public CityEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+                CityEntity cc = new CityEntity();
+//                System.out.println(rs.first());
+                cc.setID(rs.getString("dwbm"));
+                cc.setName(rs.getString("dwmc"));
+//                cc.setCenter(rs.getString("center"));
+                return cc;
+            }
+        });
+        return list;
+        }
 }

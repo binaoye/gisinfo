@@ -4,6 +4,7 @@ import com.grid.Entity.CityEntity;
 import com.grid.Entity.GeoCache;
 import com.grid.Entity.LineEntity;
 import com.grid.Entity.LineInspector;
+import com.grid.Entity.LineFeature;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
 public interface LineService {
     List<LineEntity> QueryAll(String city);
     List<CityEntity> QueryCity();
-    Map<String,double[][]> QueryLinePoint(String line);
+    Map<String,Object> QueryLinePoint(String line);
     Map<String,double[][]> QueryCityLinePoints(String city);
     GeoCache GeoEncode(String city, String county, String street, String village);
     List<LineInspector> QueryLineInspector(String line);
@@ -19,4 +20,7 @@ public interface LineService {
     void UpdateUser(LineInspector user);
     void UserExists(LineInspector user);
     List<LineInspector> UserDownload(String[] users);
+    Map<String,double[][]> ListLinePoints(String line);
+    List<CityEntity> GetProvDepts();
+    LineFeature QueryLineFeatures(String line);
 }

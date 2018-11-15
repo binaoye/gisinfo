@@ -12,4 +12,6 @@ public interface CItyDao {
     List<String> GetCounties(String city);
     List<String> GetStreets(String city, String county);
     List<String> GetVillages(String city, String county, String street);
+    List<CityEntity> GetProvDept();
+
 }

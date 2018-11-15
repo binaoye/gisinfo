@@ -6,13 +6,10 @@ import com.grid.Entity.LineEntity;
 import com.grid.Entity.LineInspector;
 import com.grid.dao.CItyDao;
 import com.grid.dao.LineDao;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import com.grid.Entity.LineFeature;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +29,7 @@ public class LineServiceImpl implements LineService {
     }
 
     @Override
-    public Map<String, double[][]> QueryLinePoint(String line) {
+    public Map<String, Object> QueryLinePoint(String line) {
         return this.ldao.QueryLinePoints(line);
     }
 
@@ -69,5 +66,20 @@ public class LineServiceImpl implements LineService {
     @Override
     public List<LineInspector> UserDownload(String[] users) {
         return ldao.DownUsers(users);
+    }
+
+    @Override
+    public Map<String, double[][]> ListLinePoints(String line) {
+        return ldao.ListLinePoints(line);
+    }
+
+    @Override
+    public List<CityEntity> GetProvDepts() {
+        return cdao.GetProvDept();
+    }
+
+    @Override
+    public LineFeature QueryLineFeatures(String line) {
+        return ldao.QueryLineFeature(line);
     }
 }

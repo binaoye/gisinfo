@@ -7,6 +7,33 @@ public class LinePoint {
     private double lng;
     private String ssxl;
     private Integer GTPLXH;
+    private String SSDKXZX;
+    private String DYDJ;
+    private String GTCZ;
+
+    public String getGTCZ() {
+        return GTCZ;
+    }
+
+    public void setGTCZ(String GTCZ) {
+        this.GTCZ = GTCZ;
+    }
+
+    public String getDYDJ() {
+        return DYDJ;
+    }
+
+    public void setDYDJ(String DYDJ) {
+        this.DYDJ = DYDJ;
+    }
+
+    public String getSSDKXZX() {
+        return SSDKXZX;
+    }
+
+    public void setSSDKXZX(String SSDKXZX) {
+        this.SSDKXZX = SSDKXZX;
+    }
 
     public Integer getGTPLXH() {
         return GTPLXH;
