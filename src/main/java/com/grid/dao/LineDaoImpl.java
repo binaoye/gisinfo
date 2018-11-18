@@ -48,7 +48,7 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, Object> QueryLinePoints(String line) {
         //查询线路上所有点
-        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
+        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d right join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a left join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
         String sql = String.format(sqlFormat, line);
         System.out.println("sql:"+ sql);
 
@@ -72,6 +72,7 @@ public class LineDaoImpl implements LineDao {
         Map<String,ArrayList> gtczx = new HashMap<String, ArrayList>();
 //        String[] str = new String[list.size()];
         ArrayList arr = new ArrayList();
+        System.out.println("点总数"+list.size());
         for(LinePoint point: list) {
             String thisline = line;
             double[] nss = new double[2];
