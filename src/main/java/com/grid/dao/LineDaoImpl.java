@@ -4,6 +4,7 @@ import com.grid.Entity.LineEntity;
 import com.grid.Entity.LineFeature;
 import com.grid.Entity.LineInspector;
 import com.grid.Entity.LinePoint;
+import com.grid.utils.csvUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
@@ -19,6 +21,9 @@ import java.util.*;
 public class LineDaoImpl implements LineDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    InputStream in = this.getClass().getResourceAsStream("/dydj.csv");
+    private Map<String, String> levels = csvUtil.ReadLevels(this.in);
 
 //    private LineCache cache = new LineCache(jdbcTemplate);
 
@@ -43,7 +48,7 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, Object> QueryLinePoints(String line) {
         //查询线路上所有点
-        String sqlFormat = "select c.*,d.gtcz from scyw.t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
+        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
         String sql = String.format(sqlFormat, line);
         System.out.println("sql:"+ sql);
 
@@ -114,7 +119,7 @@ public class LineDaoImpl implements LineDao {
         xlxzmap.put("3","分支线");
         xlxzmap.put("4","分段线路");
         xlxzmap.put("5","馈线");
-        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM dwzy.t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.\uFEFFOBJ_ID=b.SBID where OID='%s'";
+        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.\uFEFFOBJ_ID=b.SBID where OID='%s'";
         List<LineFeature> lf = jdbcTemplate.query(String.format(sqlFormatxl, line), new RowMapper<LineFeature>() {
             @Override
             public LineFeature mapRow(ResultSet rs, int i) throws SQLException {
@@ -197,9 +202,10 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public List<LineInspector> DownUsers(String[] users) {
-        String sqlFormat = "SELECT * FROM SCYW.line_inspector WHERE id in(%s)";
+        String sqlFormat = "SELECT * FROM line_inspector WHERE id in(%s)";
         String ids = String.join(",", users);
         String sql = String.format(sqlFormat, ids);
+        System.out.println(sql);
         List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
             @Override
             public LineInspector mapRow(ResultSet rs, int i) throws SQLException {
@@ -331,6 +337,7 @@ public class LineDaoImpl implements LineDao {
                 lf.setZCDWMC(rs.getString("ZCDWMC"));
                 lf.setSSDSMC(rs.getString("SSDSMC"));
                 lf.setSWID(rs.getString("SWID"));
+
                 // 补充需要关联字段
                 String xlxz = rs.getString("XLXZ");
                 if(xlxzmap.containsKey(xlxz)) {
@@ -352,6 +359,10 @@ public class LineDaoImpl implements LineDao {
                 if(zcxzmap.containsKey(zcxz)) {
                     lf.setZCXZ(zcxzmap.get(zcxz));
                 }
+                String dydjs = rs.getString("DYDJ");
+                if(levels.containsKey(dydjs)) {
+                    lf.setDydj(levels.get(dydjs));
+                }
                 return lf;
             }
         });
@@ -362,57 +373,6 @@ public class LineDaoImpl implements LineDao {
     }
 
 
-//    @Override
-//    public Map<String, double[][]> QueryCityLinePoints(String city) {
-//        //查询线路上所有点
-//        String sql = " select a.GTPLXH ,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where a.SSDS='" + city+"'";
-//        List<LinePoint> list = jdbcTemplate.query(sql, new RowMapper<LinePoint>() {
-//            //映射每行数据
-//            @Override
-//            public LinePoint mapRow(ResultSet rs, int rowNum) throws SQLException {
-//                LinePoint cc = new LinePoint();
-//                cc.setLat(rs.getDouble("SHAPE.SDO_POINT.X"));
-//                cc.setLng(rs.getDouble("SHAPE.SDO_POINT.Y"));
-//                cc.setSsxl(rs.getString("SSXL"));
-//                cc.setGTPLXH(rs.getInt("GTPLXH"));
-//                return cc;
-//            }
-//        });
-//        // 预处理所有结果
-//        Map<String,Map<Integer,double[]>> pre = new HashMap<String,Map<Integer,double[]>>();
-//        for(LinePoint point:list) {
-//            // 如果已存在ssxl，则取出值
-//            Map<Integer,double[]> mmp = new HashMap<Integer,double[]>();
-//            if (pre.containsKey(point.getSsxl())) {
-//                mmp = pre.get(point.getSsxl());
-//
-//            }
-//            double[] ns = new double[2];
-//            ns[0] = point.getLat();
-//            ns[1] = point.getLng();
-//            mmp.put(point.getGTPLXH(),ns);
-//            pre.put(point.getSsxl(), mmp);
-//        }
-//        // 排序
-//
-//        Map<String,double[][]> result = new HashMap<String,double[][]>();
-//        //遍历结果集
-//        for(String k:pre.keySet()) {
-//            Map<Integer,double[]> nmp = pre.get(k);
-//            double[][] res = new double[nmp.keySet().size()][];
-//            Map<Integer, double[]> sortMap = new TreeMap<Integer, double[]>(new MapKeyComparator());
-//            sortMap.putAll(nmp);
-//            int i = 0;
-//            for (Map.Entry<Integer, double[]> entry : sortMap.entrySet()) {
-//                //放入结果集
-//                res[i] = entry.getValue();
-//                i = i + 1;
-//                System.out.println(entry.getKey() + " " + res);
-//            }
-//            result.put(k, res);
-//        }
-//        return result;
-//    }
 }
 
 class MapKeyComparator implements Comparator<Integer> {

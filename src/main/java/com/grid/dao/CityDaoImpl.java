@@ -105,7 +105,7 @@ public class CityDaoImpl implements CItyDao {
 
     @Override
     public List<CityEntity> GetProvDept() {
-        String sql = "SELECT * FROM scyw.t_v_isc_dept where sjdwbm='008df5db70319f73e0508eoabd9b0002' group by dwbm,dwmc";
+        String sql = "SELECT * FROM t_v_isc_dept where sjdwbm='008df5db70319f73e0508eoabd9b0002' group by dwbm,dwmc";
         List<CityEntity> list = jdbcTemplate.query(sql, new RowMapper<CityEntity>() {
             //映射每行数据
             @Override
