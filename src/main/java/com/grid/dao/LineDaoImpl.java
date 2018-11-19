@@ -1,10 +1,6 @@
 package com.grid.dao;
 
-import com.grid.Entity.LineEntity;
-import com.grid.Entity.LineFeature;
-import com.grid.Entity.LineInspector;
-import com.grid.Entity.LinePoint;
-import com.grid.utils.csvUtil;
+import com.grid.Entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -13,7 +9,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
@@ -21,9 +16,6 @@ import java.util.*;
 public class LineDaoImpl implements LineDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    InputStream in = this.getClass().getResourceAsStream("/dydj.csv");
-    private Map<String, String> levels = csvUtil.ReadLevels(this.in);
 
 //    private LineCache cache = new LineCache(jdbcTemplate);
 
@@ -48,9 +40,13 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, Object> QueryLinePoints(String line) {
         //查询线路上所有点
+        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d right join " +
+                "(select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a left join t_tx_zwyc_yxgt b on a.obj_id=b.sbid where b.ssxl='%s' order by a.GTPLXH asc) c " +
+                "on c.glwlgt=d.OBJ_ID";
         String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
         String sql = String.format(sqlFormat, line);
         System.out.println("sql:"+ sql);
+
 
         List<LinePoint> list = jdbcTemplate.query(sql, new RowMapper<LinePoint>() {
             //映射每行数据
@@ -65,6 +61,7 @@ public class LineDaoImpl implements LineDao {
                 return cc;
             }
         });
+        System.out.println("查询到的条数"+list.size());
 
         // 对于每一个支线，使用GTPLXH字段排序
         Map<String,Object> result = new HashMap<String,Object>();
@@ -72,14 +69,13 @@ public class LineDaoImpl implements LineDao {
         Map<String,ArrayList> gtczx = new HashMap<String, ArrayList>();
 //        String[] str = new String[list.size()];
         ArrayList arr = new ArrayList();
-        System.out.println("点总数"+list.size());
         for(LinePoint point: list) {
             String thisline = line;
             double[] nss = new double[2];
             nss[0] = point.getLat();
             nss[1] = point.getLng();
             arr.add(nss);
-            if (!point.getSSDKXZX().equals("")) {
+            if (point.getSSDKXZX()==null) {
                 thisline = point.getSSDKXZX();
             }
             if(temp.containsKey(thisline)) {
@@ -108,7 +104,10 @@ public class LineDaoImpl implements LineDao {
         System.out.println("array size"+size+","+m+","+list.size());
         double[][] array = (double[][])arr.toArray(new double[size][]);
         double[][] mid = new double[1][];
-        mid[0] = array[m];
+        if (size > 0){
+            mid[0] = array[m];
+        }
+
         result.put(line, temp);
         result.put("gtcz", gtczx);
         result.put("center", mid);
@@ -360,10 +359,6 @@ public class LineDaoImpl implements LineDao {
                 if(zcxzmap.containsKey(zcxz)) {
                     lf.setZCXZ(zcxzmap.get(zcxz));
                 }
-                String dydjs = rs.getString("DYDJ");
-                if(levels.containsKey(dydjs)) {
-                    lf.setDydj(levels.get(dydjs));
-                }
                 return lf;
             }
         });
@@ -372,6 +367,7 @@ public class LineDaoImpl implements LineDao {
         }
         return null;
     }
+
 
     @Override
     public void deleteUsers(String[] users) {
@@ -383,6 +379,58 @@ public class LineDaoImpl implements LineDao {
     }
 
 
+
+//    @Override
+//    public Map<String, double[][]> QueryCityLinePoints(String city) {
+//        //查询线路上所有点
+//        String sql = " select a.GTPLXH ,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where a.SSDS='" + city+"'";
+//        List<LinePoint> list = jdbcTemplate.query(sql, new RowMapper<LinePoint>() {
+//            //映射每行数据
+//            @Override
+//            public LinePoint mapRow(ResultSet rs, int rowNum) throws SQLException {
+//                LinePoint cc = new LinePoint();
+//                cc.setLat(rs.getDouble("SHAPE.SDO_POINT.X"));
+//                cc.setLng(rs.getDouble("SHAPE.SDO_POINT.Y"));
+//                cc.setSsxl(rs.getString("SSXL"));
+//                cc.setGTPLXH(rs.getInt("GTPLXH"));
+//                return cc;
+//            }
+//        });
+//        // 预处理所有结果
+//        Map<String,Map<Integer,double[]>> pre = new HashMap<String,Map<Integer,double[]>>();
+//        for(LinePoint point:list) {
+//            // 如果已存在ssxl，则取出值
+//            Map<Integer,double[]> mmp = new HashMap<Integer,double[]>();
+//            if (pre.containsKey(point.getSsxl())) {
+//                mmp = pre.get(point.getSsxl());
+//
+//            }
+//            double[] ns = new double[2];
+//            ns[0] = point.getLat();
+//            ns[1] = point.getLng();
+//            mmp.put(point.getGTPLXH(),ns);
+//            pre.put(point.getSsxl(), mmp);
+//        }
+//        // 排序
+//
+//        Map<String,double[][]> result = new HashMap<String,double[][]>();
+//        //遍历结果集
+//        for(String k:pre.keySet()) {
+//            Map<Integer,double[]> nmp = pre.get(k);
+//            double[][] res = new double[nmp.keySet().size()][];
+//            Map<Integer, double[]> sortMap = new TreeMap<Integer, double[]>(new MapKeyComparator());
+//            sortMap.putAll(nmp);
+//            int i = 0;
+//            for (Map.Entry<Integer, double[]> entry : sortMap.entrySet()) {
+//                //放入结果集
+//                res[i] = entry.getValue();
+//                i = i + 1;
+//                System.out.println(entry.getKey() + " " + res);
+//            }
+//            result.put(k, res);
+//        }
+//        return result;
+//    }
 }
 
 class MapKeyComparator implements Comparator<Integer> {

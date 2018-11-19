@@ -18,5 +18,6 @@ public interface LineDao {
     List<LineInspector> DownUsers(String[] users);
     Map<String,double[][]> ListLinePoints(String line);
     LineFeature QueryLineFeature(String line);
+    GeoCache getCache();
     void deleteUsers(String[] users);
 }
