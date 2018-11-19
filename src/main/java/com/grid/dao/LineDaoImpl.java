@@ -1,9 +1,6 @@
 package com.grid.dao;
 
-import com.grid.Entity.LineEntity;
-import com.grid.Entity.LineFeature;
-import com.grid.Entity.LineInspector;
-import com.grid.Entity.LinePoint;
+import com.grid.Entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -43,9 +40,12 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, Object> QueryLinePoints(String line) {
         //查询线路上所有点
-        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
+        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d right join " +
+                "(select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a left join t_tx_zwyc_yxgt b on a.obj_id=b.sbid where b.ssxl='%s' order by a.GTPLXH asc) c " +
+                "on c.glwlgt=d.OBJ_ID";
         String sql = String.format(sqlFormat, line);
         System.out.println("sql:"+ sql);
+
 
         List<LinePoint> list = jdbcTemplate.query(sql, new RowMapper<LinePoint>() {
             //映射每行数据
@@ -60,6 +60,7 @@ public class LineDaoImpl implements LineDao {
                 return cc;
             }
         });
+        System.out.println("查询到的条数"+list.size());
 
         // 对于每一个支线，使用GTPLXH字段排序
         Map<String,Object> result = new HashMap<String,Object>();
@@ -73,7 +74,7 @@ public class LineDaoImpl implements LineDao {
             nss[0] = point.getLat();
             nss[1] = point.getLng();
             arr.add(nss);
-            if (!point.getSSDKXZX().equals("")) {
+            if (point.getSSDKXZX()==null) {
                 thisline = point.getSSDKXZX();
             }
             if(temp.containsKey(thisline)) {
@@ -102,7 +103,10 @@ public class LineDaoImpl implements LineDao {
         System.out.println("array size"+size+","+m+","+list.size());
         double[][] array = (double[][])arr.toArray(new double[size][]);
         double[][] mid = new double[1][];
-        mid[0] = array[m];
+        if (size > 0){
+            mid[0] = array[m];
+        }
+
         result.put(line, temp);
         result.put("gtcz", gtczx);
         result.put("center", mid);
@@ -358,6 +362,20 @@ public class LineDaoImpl implements LineDao {
         if(list.size() > 0) {
             return list.get(0);
         }
+        return null;
+    }
+
+    @Override
+    public GeoCache getCache() {
+        String sql = "SELECT * from gps_cache where id='11355'";
+        List<GeoCache> list = jdbcTemplate.query(sql, new RowMapper<GeoCache>() {
+            @Override
+            public GeoCache mapRow(ResultSet resultSet, int i) throws SQLException {
+
+                return null;
+            }
+        });
+        System.out.println("查询结果");
         return null;
     }
 

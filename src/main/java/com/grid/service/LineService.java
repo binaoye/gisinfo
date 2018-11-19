@@ -23,4 +23,5 @@ public interface LineService {
     Map<String,double[][]> ListLinePoints(String line);
     List<CityEntity> GetProvDepts();
     LineFeature QueryLineFeatures(String line);
+    GeoCache getCache();
 }
