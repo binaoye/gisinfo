@@ -5,13 +5,14 @@ public class LineFeature {
     private String DXMPYXKID;//电系铭牌运行库ID
     private String XLMC;//线路名称
     private String SSDS;//所属部门
+    private String SSDSMC; //所属地市名称
+    private String SGDW; //施工单位
+    private String JLDW; //监理单位
     private String YXZT;//运行状态
     private String TYRQ;//投运日期
     private String XLXZ;//线路性质
     private String XLZCD;//线路总长度（km）
     private String JKXLCD;//架空线路长度（km）
-    private String SGDW; //施工单位
-    private String JLDW; //监理单位
     private String ZCDW; //资产单位
     private String ZCBH; //资产编号
     private String SBZJFS;// 设备增加方式
@@ -20,7 +21,6 @@ public class LineFeature {
     private String WBSBH; //WBS编号
     private String WBSMS; //WBS描述
     private String ZCDWMC; //资产单位名称
-    private String SSDSMC; //所属地市名称
     private String ZYFL; //专业分类
     private String SWID; //实物ID
     private String ZCXZ; //资产性质

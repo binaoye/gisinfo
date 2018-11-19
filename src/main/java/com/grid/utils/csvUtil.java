@@ -1,5 +1,6 @@
 package com.grid.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -71,6 +72,27 @@ public class csvUtil {
         list.clear();
         list.addAll(h);
         return list;
+    }
+
+    public static Map<String,String> ReadLevels(InputStream is) {
+        Map<String, String> result =new HashMap<String, String>();
+        try {
+            ArrayList<String[]> csvList = new ArrayList<String[]>();
+            CsvReader reader = new CsvReader(is,',', Charset.forName("UTF-8"));
+//          reader.readHeaders(); //跳过表头,不跳可以注释掉
+
+            while(reader.readRecord()){
+                csvList.add(reader.getValues()); //按行读取，并把每一行的数据添加到list集合
+            }
+            reader.close();
+            System.out.println("读取的行数："+csvList.size());
+            for(int row=0;row<csvList.size();row++){
+                result.put(csvList.get(row)[0], csvList.get(row)[1]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

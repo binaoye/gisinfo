@@ -46,6 +46,9 @@ public class LineInspector {
         this.inside = inside;
     }
 
+    public LineInspector() {
+    }
+
     public LineInspector(String name, String birth, String nation, String sex, String address, String code, String line, double lat, double lng, int inside) {
         this.name = name;
         this.birth = birth;

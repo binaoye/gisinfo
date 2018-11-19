@@ -8,13 +8,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 import jxl.Workbook;
@@ -22,6 +18,7 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin(origins = "*",maxAge = 3600)
@@ -43,7 +40,7 @@ public class UserController {
 //        List<String> us = new ArrayList<String>();
         String[] us = users.split("_");
         List<LineInspector> lst = service.UserDownload(us);
-        result.put("users", lst);
+//        result.put("users", lst);
         res.setHeader("content-type", "application/octet-stream");
         res.setContentType("application/octet-stream");
         res.setHeader("Content-Disposition", "attachment;filename=" + "xunxianyuan.xls");
@@ -112,5 +109,8 @@ public class UserController {
 
         }
     }
+
+
+
 
 }

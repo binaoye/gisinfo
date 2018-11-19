@@ -1,18 +1,24 @@
 package com.grid.controllers;
 
-import com.grid.Entity.CityEntity;
-import com.grid.Entity.GeoCache;
-import com.grid.Entity.LineEntity;
-import com.grid.Entity.LineFeature;
+import com.grid.Entity.*;
 import com.grid.service.LineService;
 import com.grid.utils.LocationUtil;
 import com.grid.utils.csvUtil;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -29,65 +35,92 @@ public class MapController {
     @CrossOrigin(origins = "*",maxAge = 3600)
     public Object TestDist(String posi, String line) {
         Map<String,Object> result = new HashMap<String, Object>();
-        // 抽取城市
-        List citys = this.cache.get("city").get("city");
-        String city = travel(posi, citys);
-        posi = posi.replace(city,"");
-        // 抽取县级
-        List countys = this.cache.get("county").get("county");
-        String county = travel(posi, countys);
-        posi = posi.replace(county, "");
-        // 抽取街道或乡镇
-        List streets = this.cache.get("street").get(county);
-        String street = travel(posi,streets);
-        if (street.equals("")) {
-            if(posi.contains("乡")){
-                posi = posi.replace("乡","镇");
-                street = travel(posi, streets);
-            }else if(posi.contains("镇")){
-                posi = posi.replace("乡","镇");
-                street = travel(posi, streets);
-            }
-
-        }
-
-        posi = posi.replace(street, "");
-        posi = posi.replace("甘肃省", "");
-        posi = posi.replace("行政", "");
-        String vil = posi;
-        if (posi.contains("社区")) {
-            String[] sds = posi.split("社区");
-            vil = sds[0];
-        }
-        if (posi.contains("村")) {
-            String[] sds = posi.split("村");
-            vil = sds[0];
-        }
-        // 抽取村
-        List villages = this.cache.get("village").get(street);
-        String village = travel(vil, villages);
-        if((village.equals(""))&(vil.contains("家"))) {
-            village = travel(vil.replace("家", ""), villages);
-        }
-        GeoCache ca = this.lins.GeoEncode(city,county,street,village);
-        result.put("lat", ca.getLatitude());
-        result.put("lng", ca.getLongitude());
-        // 距离判定
-        Map<String,double[][]> points = this.lins.ListLinePoints(line);
-        double[][] ps = points.get(line);
-        double mindist = 1000000.0;
-        for(double[] poi:ps) {
-            double dist = LocationUtil.getDistance(poi[1],poi[0],ca.getLongitude(),ca.getLatitude());
-            if(dist <= mindist) {
-                mindist = dist;
-            }
-        }
-        if(mindist <= thres) {
-            result.put("result",1);
+        DistResult dr = new DistResult();
+        if(dr.getDist()>thres) {
+            result.put("result", 0);
         }else {
-            result.put("result",0);
+            result.put("result", 1);
         }
-        result.put("distance", mindist);
+        result.put("lat", dr.getLat());
+        result.put("lng", dr.getLng());
+        result.put("distance", dr.getDist());
+        return result;
+    }
+
+    public DistResult calcDist(String posi, String line) {
+        DistResult result = new DistResult();
+        System.out.println("posi"+posi);
+        if(posi.contains("甘肃省")){
+            List citys = this.cache.get("city").get("city");
+            posi = posi.replace("甘肃省","");
+            String city = travel(posi, citys);
+            System.out.println("citys"+citys.size()+city);
+            posi = posi.replace(city,"");
+            // 抽取县级
+            List countys = this.cache.get("county").get("county");
+            String county = travel(posi, countys);
+            posi = posi.replace(county, "");
+            // 抽取街道或乡镇
+            System.out.println("county"+county);
+            if(this.cache.get("street").containsKey(county)) {
+                System.out.println("111");
+            }else {
+                System.out.println("000");
+            }
+            List streets = this.cache.get("street").get(county);
+
+            String street = travel(posi,streets);
+            if (street.equals("")) {
+                if(posi.contains("乡")){
+                    posi = posi.replace("乡","镇");
+                    street = travel(posi, streets);
+                }else if(posi.contains("镇")){
+                    posi = posi.replace("乡","镇");
+                    street = travel(posi, streets);
+                }
+
+            }
+
+            posi = posi.replace(street, "");
+            posi = posi.replace("甘肃省", "");
+            posi = posi.replace("行政", "");
+            String vil = posi;
+            if (posi.contains("社区")) {
+                String[] sds = posi.split("社区");
+                vil = sds[0];
+            }
+            if (posi.contains("村")) {
+                String[] sds = posi.split("村");
+                vil = sds[0];
+            }
+            // 抽取村
+            List villages = this.cache.get("village").get(street);
+            String village = travel(vil, villages);
+            if((village.equals(""))&(vil.contains("家"))) {
+                village = travel(vil.replace("家", ""), villages);
+            }
+            GeoCache ca = this.lins.GeoEncode(city,county,street,village);
+            result.setLat(ca.getLatitude());
+            result.setLng(ca.getLongitude());
+            result.setCity(city);
+            result.setCounty(county);
+            result.setStreet(street);
+            result.setVillage(village);
+            // 距离判定
+            Map<String,double[][]> points = this.lins.ListLinePoints(line);
+            double[][] ps = points.get(line);
+            double mindist = 1000000.0;
+            for(double[] poi:ps) {
+                double dist = LocationUtil.getDistance(poi[1],poi[0],ca.getLongitude(),ca.getLatitude());
+                if(dist <= mindist) {
+                    mindist = dist;
+                }
+            }
+            result.setDist(mindist);
+        }
+
+
+
         return result;
     }
 
@@ -134,7 +167,6 @@ public class MapController {
 
     public String travel(String input, List list) {
         String result = "";
-//        System.out.println(input + list.size());
         Iterator<String> iterator = list.iterator();
         while(iterator.hasNext()){
             String next = iterator.next();
@@ -224,6 +256,77 @@ public class MapController {
         Map<String, Object> result = new HashMap<String, Object>();
         LineFeature lf = lins.QueryLineFeatures(line);
         result.put("result", lf);
+        return result;
+    }
+
+
+    @RequestMapping("/updateusers")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object UpdateUsers(MultipartFile file, String line) {
+        Map<String,Object> result = new HashMap<String,Object>();
+        Workbook book = null;
+        List<String> failList = new ArrayList<>();
+        if (!file.isEmpty()) {
+            try {
+                System.out.println("name"+ file.getOriginalFilename());
+                String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+                if (".xls".equals(ext)) {
+                    book = new HSSFWorkbook(file.getInputStream());
+
+                } else if (".xlsx".equals(ext)) {
+                    book = new XSSFWorkbook(file.getInputStream());
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (null != book) {
+                // 姓名，性别，民族，地址，生日，号码
+                Sheet sheet = book.getSheetAt(0);
+                System.out.println("总长度"+sheet.getLastRowNum());
+                for (int i = 0; i < sheet.getLastRowNum(); i++) {
+                    if(sheet.getRow(i).getCell(5) != null & !sheet.getRow(i).getCell(0).equals("姓名")) {
+                        LineInspector li = new LineInspector();
+                        Cell cell4 = sheet.getRow(i).getCell(4);//假如row.getCell(0)中的数值为12345678910123
+                        cell4.setCellType(HSSFCell.CELL_TYPE_STRING);
+                        Cell cell5 = sheet.getRow(i).getCell(5);//假如row.getCell(0)中的数值为12345678910123
+                        cell5.setCellType(HSSFCell.CELL_TYPE_STRING);
+                        String address = sheet.getRow(i).getCell(3).getStringCellValue();
+                        System.out.println(sheet.getRow(i).getCell(3).getStringCellValue());
+                        DistResult dr = calcDist(address,line);
+                        System.out.println("测试距离"+dr.getCounty());
+                        if(dr.getLat()>0) {
+                            li.setDistance(dr.getDist());
+                            if(dr.getDist()<=thres) {
+                                li.setInside(1);
+                            }else {
+                                li.setInside(0);
+                            }
+                            li.setAddress(address);
+                            li.setBirth("" + sheet.getRow(i).getCell(4).getStringCellValue());
+                            li.setCode("" + sheet.getRow(i).getCell(5).getStringCellValue());
+                            li.setLat(dr.getLat());
+                            li.setLng(dr.getLng());
+                            li.setName(sheet.getRow(i).getCell(0).getStringCellValue());
+                            li.setSex(sheet.getRow(i).getCell(1).getStringCellValue());
+                            li.setNation(sheet.getRow(i).getCell(2).getStringCellValue());
+                            lins.AddUser(li);
+                        }else {
+                            if(sheet.getRow(i).getCell(3).getStringCellValue().contains("甘肃省")) {
+                                failList.add(sheet.getRow(i).getCell(0).getStringCellValue());
+                            }
+                        }
+
+                    }else {
+                        result.put("result", -1);
+                        result.put("errmsg", "格式错误");
+                    }
+                }
+            }
+        }
+        result.put("result", 0);
+        result.put("fail", failList);
         return result;
     }
 
