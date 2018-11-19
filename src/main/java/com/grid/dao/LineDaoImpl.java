@@ -43,7 +43,7 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, Object> QueryLinePoints(String line) {
         //查询线路上所有点
-        String sqlFormat = "select c.*,d.gtcz from scyw.t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
+        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
         String sql = String.format(sqlFormat, line);
         System.out.println("sql:"+ sql);
 
@@ -114,7 +114,7 @@ public class LineDaoImpl implements LineDao {
         xlxzmap.put("3","分支线");
         xlxzmap.put("4","分段线路");
         xlxzmap.put("5","馈线");
-        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM dwzy.t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.\uFEFFOBJ_ID=b.SBID where OID='%s'";
+        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.\uFEFFOBJ_ID=b.SBID where OID='%s'";
         List<LineFeature> lf = jdbcTemplate.query(String.format(sqlFormatxl, line), new RowMapper<LineFeature>() {
             @Override
             public LineFeature mapRow(ResultSet rs, int i) throws SQLException {
@@ -197,7 +197,7 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public List<LineInspector> DownUsers(String[] users) {
-        String sqlFormat = "SELECT * FROM SCYW.line_inspector WHERE id in(%s)";
+        String sqlFormat = "SELECT * FROM line_inspector WHERE id in(%s)";
         String ids = String.join(",", users);
         String sql = String.format(sqlFormat, ids);
         List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
