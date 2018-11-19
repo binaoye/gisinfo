@@ -18,4 +18,5 @@ public interface LineDao {
     List<LineInspector> DownUsers(String[] users);
     Map<String,double[][]> ListLinePoints(String line);
     LineFeature QueryLineFeature(String line);
+    void deleteUsers(String[] users);
 }

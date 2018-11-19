@@ -63,6 +63,12 @@ public class UserController {
     }
 
 
+    /**
+     * 下载用户excel
+     * @param users
+     * @param workbook
+     * @throws Exception
+     */
     private void userExcel(List<LineInspector> users, WritableWorkbook workbook) throws Exception {
         WritableSheet sheet = workbook.createSheet("First Sheet",0);
         //创建要显示的内容,创建一个单元格，第一个参数为列坐标，第二个参数为行坐标，第三个参数为内容
@@ -108,6 +114,18 @@ public class UserController {
             }
 
         }
+    }
+
+    @RequestMapping("/deleteusers")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object deleteUsers(String users) {
+        Map<String, Object> result = new HashMap<String, Object>();
+//        List<String> us = new ArrayList<String>();
+        String[] us = users.split("_");
+        service.deleteUsers(us);
+        result.put("result", "0");
+        return result;
     }
 
 

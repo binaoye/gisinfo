@@ -82,4 +82,9 @@ public class LineServiceImpl implements LineService {
     public LineFeature QueryLineFeatures(String line) {
         return ldao.QueryLineFeature(line);
     }
+
+    @Override
+    public void deleteUsers(String[] users) {
+        ldao.deleteUsers(users);
+    }
 }
