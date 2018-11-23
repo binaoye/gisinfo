@@ -84,7 +84,7 @@ public class LineServiceImpl implements LineService {
     }
 
     @Override
-    public GeoCache getCache() {
-        return ldao.getCache();
+    public void deleteUsers(String[] users) {
+        ldao.deleteUsers(users);
     }
 }

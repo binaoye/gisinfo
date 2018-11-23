@@ -1,6 +1,5 @@
 package com.grid.dao;
 
-import com.grid.Entity.GeoCache;
 import com.grid.Entity.LineEntity;
 import com.grid.Entity.LineFeature;
 import com.grid.Entity.LineInspector;
@@ -20,4 +19,5 @@ public interface LineDao {
     Map<String,double[][]> ListLinePoints(String line);
     LineFeature QueryLineFeature(String line);
     GeoCache getCache();
+    void deleteUsers(String[] users);
 }

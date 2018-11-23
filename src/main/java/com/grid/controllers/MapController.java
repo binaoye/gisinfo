@@ -330,12 +330,12 @@ public class MapController {
         return result;
     }
 
-    @RequestMapping("/testsql")
-    @ResponseBody
-    @CrossOrigin(origins = "*", maxAge = 3600)
-    public Object testSql() {
-        return lins.getCache();
-    }
+//    @RequestMapping("/testsql")
+//    @ResponseBody
+//    @CrossOrigin(origins = "*", maxAge = 3600)
+//    public Object testSql() {
+//        return lins.getCache();
+//    }
 
 
 }

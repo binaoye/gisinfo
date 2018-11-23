@@ -42,9 +42,10 @@ public class LineDaoImpl implements LineDao {
     @Override
     public Map<String, Object> QueryLinePoints(String line) {
         //查询线路上所有点
-        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d right join " +
-                "(select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a left join t_tx_zwyc_yxgt b on a.obj_id=b.sbid where b.ssxl='%s' order by a.GTPLXH asc) c " +
-                "on c.glwlgt=d.OBJ_ID";
+//        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d right join " +
+//                "(select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a left join t_tx_zwyc_yxgt b on a.obj_id=b.sbid where b.ssxl='%s' order by a.GTPLXH asc) c " +
+//                "on c.glwlgt=d.OBJ_ID";
+        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
         String sql = String.format(sqlFormat, line);
         System.out.println("sql:"+ sql);
 
@@ -210,6 +211,7 @@ public class LineDaoImpl implements LineDao {
         String sqlFormat = "SELECT * FROM line_inspector WHERE id in(%s)";
         String ids = String.join(",", users);
         String sql = String.format(sqlFormat, ids);
+        System.out.println(sql);
         List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
             @Override
             public LineInspector mapRow(ResultSet rs, int i) throws SQLException {
@@ -341,6 +343,7 @@ public class LineDaoImpl implements LineDao {
                 lf.setZCDWMC(rs.getString("ZCDWMC"));
                 lf.setSSDSMC(rs.getString("SSDSMC"));
                 lf.setSWID(rs.getString("SWID"));
+
                 // 补充需要关联字段
                 String xlxz = rs.getString("XLXZ");
                 if(xlxzmap.containsKey(xlxz)) {
@@ -371,19 +374,16 @@ public class LineDaoImpl implements LineDao {
         return null;
     }
 
-    @Override
-    public GeoCache getCache() {
-        String sql = "SELECT * from gps_cache where id='11355'";
-        List<GeoCache> list = jdbcTemplate.query(sql, new RowMapper<GeoCache>() {
-            @Override
-            public GeoCache mapRow(ResultSet resultSet, int i) throws SQLException {
 
-                return null;
-            }
-        });
-        System.out.println("查询结果");
-        return null;
+    @Override
+    public void deleteUsers(String[] users) {
+        String sqlFormat = "DELETE * FROM line_inspector WHERE id in(%s)";
+        String ids = String.join(",", users);
+        String sql = String.format(sqlFormat, ids);
+        System.out.println(sql);
+        jdbcTemplate.update(sql);
     }
+
 
 
 //    @Override
