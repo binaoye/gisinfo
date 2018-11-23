@@ -1,6 +1,8 @@
 package com.grid.dao;
 
 import com.grid.Entity.*;
+import com.vividsolutions.jts.geom.Geometry;
+import oracle.sql.STRUCT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -53,6 +55,10 @@ public class LineDaoImpl implements LineDao {
             public LinePoint mapRow(ResultSet rs, int rowNum) throws SQLException {
                 LinePoint cc = new LinePoint();
                 cc.setSSDKXZX(rs.getString("SSDKXZX"));
+                STRUCT struct = (STRUCT) rs.getObject("SHAPE");
+                Object[] values = struct.getAttributes();
+                System.out.println(struct.debugString());
+                System.out.println("dsds"+struct.getMap());
                 cc.setLat(rs.getDouble("SHAPE.SDO_POINT.X"));
                 cc.setLng(rs.getDouble("SHAPE.SDO_POINT.Y"));
                 cc.setGTCZ(rs.getString("GTCZ"));

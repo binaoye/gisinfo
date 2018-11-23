@@ -78,7 +78,7 @@ public class CityDaoImpl implements CItyDao {
 
     @Override
     public List<String> GetCounties(String city) {
-        String sqlFormat = "SELECT DISTINCT(county) FROM gps_cache WHERE city=%s";
+        String sqlFormat = "SELECT DISTINCT(county) FROM gps_cache WHERE city='%s'";
         String sql_county = String.format(sqlFormat, city);
         System.out.println("sql:" + sql_county);
         List<String> county_list = jdbcTemplate.queryForList(sql_county, String.class);
