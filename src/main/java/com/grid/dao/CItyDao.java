@@ -2,6 +2,7 @@ package com.grid.dao;
 
 import com.grid.Entity.CityEntity;
 import com.grid.Entity.GeoCache;
+import com.grid.Entity.LineInspector;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ public interface CItyDao {
     List<String> GetVillages(String city, String county, String street);
     List<CityEntity> GetProvDept();
 
+    List<LineInspector> QueryCityInspectors(String city);
+
+    List<LineInspector> QueryAll();
 }

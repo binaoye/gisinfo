@@ -1,8 +1,7 @@
 package com.grid.dao;
 
 import com.grid.Entity.*;
-import com.vividsolutions.jts.geom.Geometry;
-import oracle.sql.STRUCT;
+import oracle.spatial.geometry.JGeometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.*;
+
 
 @Repository
 public class LineDaoImpl implements LineDao {
@@ -55,13 +55,21 @@ public class LineDaoImpl implements LineDao {
             @Override
             public LinePoint mapRow(ResultSet rs, int rowNum) throws SQLException {
                 LinePoint cc = new LinePoint();
+                byte[] image = new byte[0];
                 cc.setSSDKXZX(rs.getString("SSDKXZX"));
-                STRUCT struct = (STRUCT) rs.getObject("SHAPE");
-                Object[] values = struct.getAttributes();
-                System.out.println(struct.debugString());
-                System.out.println("dsds"+struct.getMap());
-                cc.setLat(rs.getDouble("SHAPE.SDO_POINT.X"));
-                cc.setLng(rs.getDouble("SHAPE.SDO_POINT.Y"));
+                image = rs.getBytes("SHAPE");
+                try {
+                    JGeometry metry = JGeometry.load(image);
+                    double[] point = metry.getLabelPointXYZ();
+                    if(point.length>=2) {
+                        cc.setLat(point[1]);
+                        cc.setLng(point[0]);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 cc.setGTCZ(rs.getString("GTCZ"));
 //                cc.setDYDJ(rs.getString("DYDJ"));
                 return cc;
@@ -81,7 +89,7 @@ public class LineDaoImpl implements LineDao {
             nss[0] = point.getLat();
             nss[1] = point.getLng();
             arr.add(nss);
-            if (point.getSSDKXZX()==null) {
+            if (point.getSSDKXZX()!=null) {
                 thisline = point.getSSDKXZX();
             }
             if(temp.containsKey(thisline)) {
@@ -107,7 +115,6 @@ public class LineDaoImpl implements LineDao {
         if (size > 2) {
             m = size/2;
         }
-        System.out.println("array size"+size+","+m+","+list.size());
         double[][] array = (double[][])arr.toArray(new double[size][]);
         double[][] mid = new double[1][];
         if (size > 0){
@@ -125,7 +132,7 @@ public class LineDaoImpl implements LineDao {
         xlxzmap.put("3","分支线");
         xlxzmap.put("4","分段线路");
         xlxzmap.put("5","馈线");
-        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.\uFEFFOBJ_ID=b.SBID where OID='%s'";
+        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s'";
         List<LineFeature> lf = jdbcTemplate.query(String.format(sqlFormatxl, line), new RowMapper<LineFeature>() {
             @Override
             public LineFeature mapRow(ResultSet rs, int i) throws SQLException {
@@ -241,8 +248,19 @@ public class LineDaoImpl implements LineDao {
             public LinePoint mapRow(ResultSet rs, int rowNum) throws SQLException {
                 LinePoint cc = new LinePoint();
 //                cc.setSSDKXZX(rs.getString("SSDKXZX"));
-                cc.setLat(rs.getDouble("SHAPE.SDO_POINT.X"));
-                cc.setLng(rs.getDouble("SHAPE.SDO_POINT.Y"));
+                byte[] image = new byte[0];
+                image = rs.getBytes("SHAPE");
+                try {
+                    JGeometry metry = JGeometry.load(image);
+                    double[] point = metry.getLabelPointXYZ();
+                    if(point.length>=2) {
+                        cc.setLat(point[1]);
+                        cc.setLng(point[0]);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 //                System.out.println(rs.getString("GTPLXH"));
                 return cc;
             }
@@ -377,13 +395,19 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public void deleteUsers(String[] users) {
-        String sqlFormat = "DELETE * FROM line_inspector WHERE id in(%s)";
+        String sqlFormat = "DELETE FROM line_inspector WHERE id in(%s)";
         String ids = String.join(",", users);
         String sql = String.format(sqlFormat, ids);
-        System.out.println(sql);
         jdbcTemplate.update(sql);
     }
 
+    @Override
+    public void delUser(String code) {
+        String sqlFormat = "DELETE FROM line_inspector WHERE code='%s'";
+        String sql = String.format(sqlFormat, code);
+        System.out.println("删除用户:"+sql);
+        jdbcTemplate.update(sql);
+    }
 
 
 //    @Override

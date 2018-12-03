@@ -36,6 +36,7 @@ public class MapController {
     public Object TestDist(String posi, String line) {
         Map<String,Object> result = new HashMap<String, Object>();
         DistResult dr = new DistResult();
+        dr = calcDist(posi, line);
         if(dr.getDist()>thres) {
             result.put("result", 0);
         }else {
@@ -109,7 +110,7 @@ public class MapController {
             // 距离判定
             Map<String,double[][]> points = this.lins.ListLinePoints(line);
             double[][] ps = points.get(line);
-            double mindist = 1000000.0;
+            double mindist = 100000000.0;
             for(double[] poi:ps) {
                 double dist = LocationUtil.getDistance(poi[1],poi[0],ca.getLongitude(),ca.getLatitude());
                 if(dist <= mindist) {
@@ -269,7 +270,7 @@ public class MapController {
         List<String> failList = new ArrayList<>();
         if (!file.isEmpty()) {
             try {
-                System.out.println("name"+ file.getOriginalFilename());
+//                System.out.println("name"+ file.getOriginalFilename());
                 String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
                 if (".xls".equals(ext)) {
                     book = new HSSFWorkbook(file.getInputStream());
@@ -282,39 +283,41 @@ public class MapController {
                 e.printStackTrace();
             }
             if (null != book) {
-                // 姓名，性别，民族，地址，生日，号码
+                // ID,姓名，性别，民族，地址，生日，号码
                 Sheet sheet = book.getSheetAt(0);
-                System.out.println("总长度"+sheet.getLastRowNum());
+//                System.out.println("总长度"+sheet.getLastRowNum());
                 for (int i = 0; i < sheet.getLastRowNum(); i++) {
-                    if(sheet.getRow(i).getCell(5) != null & !sheet.getRow(i).getCell(0).equals("姓名")) {
+                    if(sheet.getRow(i).getCell(5) != null & !sheet.getRow(i).getCell(1).equals("姓名")) {
                         LineInspector li = new LineInspector();
-                        Cell cell4 = sheet.getRow(i).getCell(4);//假如row.getCell(0)中的数值为12345678910123
+                        Cell cell4 = sheet.getRow(i).getCell(5);//假如row.getCell(0)中的数值为12345678910123
                         cell4.setCellType(HSSFCell.CELL_TYPE_STRING);
-                        Cell cell5 = sheet.getRow(i).getCell(5);//假如row.getCell(0)中的数值为12345678910123
+                        Cell cell5 = sheet.getRow(i).getCell(6);//假如row.getCell(0)中的数值为12345678910123
                         cell5.setCellType(HSSFCell.CELL_TYPE_STRING);
-                        String address = sheet.getRow(i).getCell(3).getStringCellValue();
-                        System.out.println(sheet.getRow(i).getCell(3).getStringCellValue());
+                        String address = sheet.getRow(i).getCell(4).getStringCellValue();
                         DistResult dr = calcDist(address,line);
-                        System.out.println("测试距离"+dr.getCounty());
+//                        System.out.println("测试距离"+dr.getCounty());
                         if(dr.getLat()>0) {
                             li.setDistance(dr.getDist());
                             if(dr.getDist()<=thres) {
                                 li.setInside(1);
+                            }else if(dr.getDist()==1000) {
+                                li.setInside(2);
                             }else {
                                 li.setInside(0);
                             }
                             li.setAddress(address);
-                            li.setBirth("" + sheet.getRow(i).getCell(4).getStringCellValue());
-                            li.setCode("" + sheet.getRow(i).getCell(5).getStringCellValue());
+                            li.setBirth("" + sheet.getRow(i).getCell(5).getStringCellValue());
+                            li.setCode("" + sheet.getRow(i).getCell(6).getStringCellValue());
                             li.setLat(dr.getLat());
                             li.setLng(dr.getLng());
-                            li.setName(sheet.getRow(i).getCell(0).getStringCellValue());
-                            li.setSex(sheet.getRow(i).getCell(1).getStringCellValue());
-                            li.setNation(sheet.getRow(i).getCell(2).getStringCellValue());
+                            li.setName(sheet.getRow(i).getCell(1).getStringCellValue());
+                            li.setSex(sheet.getRow(i).getCell(2).getStringCellValue());
+                            li.setNation(sheet.getRow(i).getCell(3).getStringCellValue());
+                            lins.delUser(li.getCode());
                             lins.AddUser(li);
                         }else {
-                            if(sheet.getRow(i).getCell(3).getStringCellValue().contains("甘肃省")) {
-                                failList.add(sheet.getRow(i).getCell(0).getStringCellValue());
+                            if(sheet.getRow(i).getCell(4).getStringCellValue().contains("甘肃省")) {
+                                failList.add(sheet.getRow(i).getCell(1).getStringCellValue());
                             }
                         }
 
@@ -328,6 +331,15 @@ public class MapController {
         result.put("result", 0);
         result.put("fail", failList);
         return result;
+    }
+
+
+    @RequestMapping("/shanchu")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object del(String code) {
+        this.lins.delUser(code);
+        return "";
     }
 
 //    @RequestMapping("/testsql")

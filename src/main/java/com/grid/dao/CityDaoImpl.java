@@ -3,6 +3,7 @@ package com.grid.dao;
 import com.grid.Entity.CityEntity;
 import com.grid.Entity.GeoCache;
 import com.grid.Entity.LineEntity;
+import com.grid.Entity.LineInspector;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -43,7 +44,15 @@ public class CityDaoImpl implements CItyDao {
     public GeoCache GeoEncode(String city, String county, String street, String village) {
         // 先拼接基础
         String sql = "SELECT * FROM gps_cache WHERE village='%s' AND county='%s' AND street='%S'" ;
+        String sql2 = "SELECT * FROM gps_cache WHERE county='%s'";
+        String sql3 = "SELECT * FROM gps_cache WHERE county='%s' and street='%s'";
         String s = String.format(sql,village,county,street);
+        if(street.equals("")&village.equals("")) {
+            s = String.format(sql2, county);
+        }else if(village.equals("")) {
+            s = String.format(sql3, county, street);
+        }
+
         System.out.println(s);
         GeoCache result = new GeoCache();
         List<GeoCache> list = jdbcTemplate.query(s, new RowMapper<GeoCache>() {
@@ -120,4 +129,50 @@ public class CityDaoImpl implements CItyDao {
         });
         return list;
         }
+
+    @Override
+    public List<LineInspector> QueryCityInspectors(String city) {
+        String sqlFormat = "SELECT b.* FROM T_TX_ZWYC_XL a join line_inspector b on a.oid=b.line where ssds='%s' ";
+        String sql = String.format(sqlFormat, city);
+        List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
+            @Override
+            public LineInspector mapRow(ResultSet rs, int i) throws SQLException {
+                LineInspector li = new LineInspector(rs.getString("name"),
+                        rs.getString("birth"), rs.getString("nation"), rs.getString("sex"),
+                        rs.getString("address"), rs.getString("code"), rs.getString("line"),
+                        rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
+                );
+                li.setId(rs.getInt("id"));
+                li.setId(0);
+                li.setDistance(rs.getDouble("distance"));
+                return li;
+            }
+        });
+
+
+        return list;
+    }
+
+    @Override
+    public List<LineInspector> QueryAll() {
+//        String sqlFormat = "SELECT b.* FROM T_TX_ZWYC_XL a join line_inspector b on a.oid=b.line where ssds='%s' ";
+        String sql = "SELECT * FROM line_inspector";
+        List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
+            @Override
+            public LineInspector mapRow(ResultSet rs, int i) throws SQLException {
+                LineInspector li = new LineInspector(rs.getString("name"),
+                        rs.getString("birth"), rs.getString("nation"), rs.getString("sex"),
+                        rs.getString("address"), rs.getString("code"), rs.getString("line"),
+                        rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
+                );
+                li.setId(rs.getInt("id"));
+                li.setId(0);
+                li.setDistance(rs.getDouble("distance"));
+                return li;
+            }
+        });
+
+
+        return list;
+    }
 }

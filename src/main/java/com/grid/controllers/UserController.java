@@ -108,8 +108,11 @@ public class UserController {
             if (users.get(i).getInside() == 1) {
                 Label aisyes = new Label(7,i+1,"是");
                 sheet.addCell(aisyes);
-            }else {
+            }else if(users.get(i).getInside()==0){
                 Label aisyes = new Label(7,i+1,"否");
+                sheet.addCell(aisyes);
+            }else {
+                Label aisyes = new Label(7,i+1,"地址格式错误");
                 sheet.addCell(aisyes);
             }
 
@@ -125,6 +128,66 @@ public class UserController {
         String[] us = users.split("_");
         service.deleteUsers(us);
         result.put("result", "0");
+        return result;
+    }
+
+    @RequestMapping("/cityusers")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object cityUsers(String city,HttpServletResponse res) {
+        Map<String, Object> result = new HashMap<String, Object>();
+//        List<String> us = new ArrayList<String>();
+        List<LineInspector> inspectors = service.QueryCityInspectors(city);
+        res.setHeader("content-type", "application/octet-stream");
+        res.setContentType("application/octet-stream");
+        res.setHeader("Content-Disposition", "attachment;filename=" + "巡线员.xls");
+        result.put("result", "0");
+        try {
+            OutputStream os = null;
+            BufferedInputStream bis = null;
+            os = res.getOutputStream();
+            WritableWorkbook workbook = Workbook.createWorkbook(os);
+            //创建新的一页
+            userExcel(inspectors, workbook);
+            //把创建的内容写入到输出流中，并关闭输出流
+            workbook.write();
+            workbook.close();
+            os.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    @RequestMapping("/allusers")
+    @ResponseBody
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    public Object allUsers(HttpServletResponse res) {
+        Map<String, Object> result = new HashMap<String, Object>();
+//        List<String> us = new ArrayList<String>();
+        List<LineInspector> inspectors = service.QueryAllInspectors();
+        res.setHeader("content-type", "application/octet-stream");
+        res.setContentType("application/octet-stream");
+        res.setHeader("Content-Disposition", "attachment;filename=" + "巡线员.xls");
+        result.put("result", "0");
+        try {
+            OutputStream os = null;
+            BufferedInputStream bis = null;
+            os = res.getOutputStream();
+            WritableWorkbook workbook = Workbook.createWorkbook(os);
+            //创建新的一页
+            userExcel(inspectors, workbook);
+            //把创建的内容写入到输出流中，并关闭输出流
+            workbook.write();
+            workbook.close();
+            os.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return result;
     }
 

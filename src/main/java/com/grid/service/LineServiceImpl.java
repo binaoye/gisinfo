@@ -87,4 +87,19 @@ public class LineServiceImpl implements LineService {
     public void deleteUsers(String[] users) {
         ldao.deleteUsers(users);
     }
+
+    @Override
+    public List<LineInspector> QueryCityInspectors(String city) {
+        return cdao.QueryCityInspectors(city);
+    }
+
+    @Override
+    public List<LineInspector> QueryAllInspectors() {
+        return cdao.QueryAll();
+    }
+
+    @Override
+    public void delUser(String code) {
+        ldao.delUser(code);
+    }
 }

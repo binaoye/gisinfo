@@ -24,4 +24,10 @@ public interface LineService {
     List<CityEntity> GetProvDepts();
     LineFeature QueryLineFeatures(String line);
     void deleteUsers(String[] users);
+
+    List<LineInspector> QueryCityInspectors(String city);
+
+    List<LineInspector> QueryAllInspectors();
+
+    void delUser(String code);
 }
