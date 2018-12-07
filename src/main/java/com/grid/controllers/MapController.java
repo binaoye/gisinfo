@@ -224,6 +224,7 @@ public class MapController {
         // 距离判定
         Map<String,double[][]> points = this.lins.ListLinePoints(line);
         double[][] ps = points.get(line);
+        System.out.println("总点数"+ps.length);
         double mindist = 1000000.0;
         for(double[] poi:ps) {
             double dist = LocationUtil.getDistance(poi[1],poi[0],ca.getLongitude(),ca.getLatitude());
@@ -265,6 +266,7 @@ public class MapController {
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
     public Object UpdateUsers(MultipartFile file, String line) {
+        System.out.println("批量上传路线："+line);
         Map<String,Object> result = new HashMap<String,Object>();
         Workbook book = null;
         List<String> failList = new ArrayList<>();
@@ -306,6 +308,7 @@ public class MapController {
                                 li.setInside(0);
                             }
                             li.setAddress(address);
+                            li.setLine(line);
                             li.setBirth("" + sheet.getRow(i).getCell(5).getStringCellValue());
                             li.setCode("" + sheet.getRow(i).getCell(6).getStringCellValue());
                             li.setLat(dr.getLat());

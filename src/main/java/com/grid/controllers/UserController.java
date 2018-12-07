@@ -43,14 +43,14 @@ public class UserController {
 //        result.put("users", lst);
         res.setHeader("content-type", "application/octet-stream");
         res.setContentType("application/octet-stream");
-        res.setHeader("Content-Disposition", "attachment;filename=" + "xunxianyuan.xls");
+        res.setHeader("Content-Disposition", "attachment;filename=" + "巡线员.xls");
         try {
             OutputStream os = null;
             BufferedInputStream bis = null;
             os = res.getOutputStream();
             WritableWorkbook workbook = Workbook.createWorkbook(os);
             //创建新的一页
-            userExcel(lst, workbook);
+            userExcel(lst, workbook,false);
             //把创建的内容写入到输出流中，并关闭输出流
             workbook.write();
             workbook.close();
@@ -69,7 +69,7 @@ public class UserController {
      * @param workbook
      * @throws Exception
      */
-    private void userExcel(List<LineInspector> users, WritableWorkbook workbook) throws Exception {
+    private void userExcel(List<LineInspector> users, WritableWorkbook workbook, boolean flag) throws Exception {
         WritableSheet sheet = workbook.createSheet("First Sheet",0);
         //创建要显示的内容,创建一个单元格，第一个参数为列坐标，第二个参数为行坐标，第三个参数为内容
         Label name = new Label(0,0,"姓名");
@@ -88,6 +88,13 @@ public class UserController {
         sheet.addCell(distance);
         Label isyes = new Label(7,0,"是否范围内");
         sheet.addCell(isyes);
+        if(flag) {
+            Label line = new Label(8,0,"线路名称");
+            sheet.addCell(line);
+            Label dept = new Label(9,0,"所属单位");
+            sheet.addCell(dept);
+        }
+
 
         // 循环写入
         for(int i=0;i< users.size(); i++) {
@@ -115,6 +122,13 @@ public class UserController {
                 Label aisyes = new Label(7,i+1,"地址格式错误");
                 sheet.addCell(aisyes);
             }
+            if(flag) {
+                Label line = new Label(8,i+1,String.valueOf(users.get(i).getLinename()));
+                sheet.addCell(line);
+                Label dept = new Label(9,i+1,String.valueOf(users.get(i).getDept()));
+                sheet.addCell(dept);
+            }
+
 
         }
     }
@@ -148,7 +162,7 @@ public class UserController {
             os = res.getOutputStream();
             WritableWorkbook workbook = Workbook.createWorkbook(os);
             //创建新的一页
-            userExcel(inspectors, workbook);
+            userExcel(inspectors, workbook,true);
             //把创建的内容写入到输出流中，并关闭输出流
             workbook.write();
             workbook.close();
@@ -170,7 +184,7 @@ public class UserController {
         List<LineInspector> inspectors = service.QueryAllInspectors();
         res.setHeader("content-type", "application/octet-stream");
         res.setContentType("application/octet-stream");
-        res.setHeader("Content-Disposition", "attachment;filename=" + "巡线员.xls");
+        res.setHeader("Content-Disposition", "attachment;filename=" + "全省巡线员.xls");
         result.put("result", "0");
         try {
             OutputStream os = null;
@@ -178,7 +192,7 @@ public class UserController {
             os = res.getOutputStream();
             WritableWorkbook workbook = Workbook.createWorkbook(os);
             //创建新的一页
-            userExcel(inspectors, workbook);
+            userExcel(inspectors, workbook,true);
             //把创建的内容写入到输出流中，并关闭输出流
             workbook.write();
             workbook.close();
@@ -190,6 +204,9 @@ public class UserController {
 
         return result;
     }
+
+
+
 
 
 

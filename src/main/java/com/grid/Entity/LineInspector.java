@@ -13,6 +13,33 @@ public class LineInspector {
     private double lat;
     private double lng;
     private double distance;
+    private String linename;
+    private String cityname;
+    private String dept;
+
+    public String getDept() {
+        return dept;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    public String getLinename() {
+        return linename;
+    }
+
+    public void setLinename(String linename) {
+        this.linename = linename;
+    }
+
+    public String getCityname() {
+        return cityname;
+    }
+
+    public void setCityname(String cityname) {
+        this.cityname = cityname;
+    }
 
     public double getDistance() {
         return distance;

@@ -45,7 +45,7 @@ public class LineDaoImpl implements LineDao {
 //        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d right join " +
 //                "(select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a left join t_tx_zwyc_yxgt b on a.obj_id=b.sbid where b.ssxl='%s' order by a.GTPLXH asc) c " +
 //                "on c.glwlgt=d.OBJ_ID";
-        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
+        String sqlFormat = "select c.*,d.gtcz from t_sb_zwyc_wlg d right join (select a.GTPLXH,a.glwlgt,b.* from t_sb_zwyc_gt a join t_tx_zwyc_yxgt b on OBJ_ID=SBID where b.ssxl='%s' order by a.GTPLXH asc) c on c.glwlgt=d.OBJ_ID";
         String sql = String.format(sqlFormat, line);
         System.out.println("sql:"+ sql);
 
@@ -62,15 +62,20 @@ public class LineDaoImpl implements LineDao {
                     JGeometry metry = JGeometry.load(image);
                     double[] point = metry.getLabelPointXYZ();
                     if(point.length>=2) {
-                        cc.setLat(point[1]);
-                        cc.setLng(point[0]);
+                        cc.setLat(point[0]);
+                        cc.setLng(point[1]);
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                String gtcz = rs.getString("GTCZ");
+                if(gtcz==null||gtcz.equals("")) {
+                    cc.setGTCZ("1");
+                }else {
+                    cc.setGTCZ(gtcz);
+                }
 
-                cc.setGTCZ(rs.getString("GTCZ"));
 //                cc.setDYDJ(rs.getString("DYDJ"));
                 return cc;
             }
@@ -190,10 +195,7 @@ public class LineDaoImpl implements LineDao {
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-//                ps.setString(1, "nid");
-//                ps.setInt(1, 0);
-//                ps.setLong(0,0);
+                PreparedStatement ps = connection.prepareStatement(sql, new String[]{"ID"});
                 return ps;
             }
         }, kh);
@@ -254,8 +256,8 @@ public class LineDaoImpl implements LineDao {
                     JGeometry metry = JGeometry.load(image);
                     double[] point = metry.getLabelPointXYZ();
                     if(point.length>=2) {
-                        cc.setLat(point[1]);
-                        cc.setLng(point[0]);
+                        cc.setLat(point[0]);
+                        cc.setLng(point[1]);
                     }
 
                 } catch (Exception e) {
@@ -265,10 +267,8 @@ public class LineDaoImpl implements LineDao {
                 return cc;
             }
         });
-        // 查询所有支线列表
 
 
-        // 对于每一个支线，使用GTPLXH字段排序
         Map<String,double[][]> result = new HashMap<String,double[][]>();
         Map<String,ArrayList> temp = new HashMap<String, ArrayList>();
 //        String[] str = new String[list.size()];
@@ -278,9 +278,6 @@ public class LineDaoImpl implements LineDao {
             nss[0] = point.getLat();
             nss[1] = point.getLng();
             arr.add(nss);
-//
-////            System.out.println("["+point.getLat()+", "+ point.getLng()+"],");
-//            arr.add(nss);
         }
         int size=arr.size();
         int m = 0;
@@ -298,7 +295,7 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public LineFeature QueryLineFeature(String line) {
-        String sqlFormat = "SELECT * FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.\uFEFFOBJ_ID=b.SBID where OID='%s'";
+        String sqlFormat = "SELECT * FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s'";
         String sql = String.format(sqlFormat, line);
         Map<String, String> xlxzmap = new HashMap<String, String>();
         xlxzmap.put("1","主线");
@@ -346,13 +343,13 @@ public class LineDaoImpl implements LineDao {
                 lf.setSBBM(rs.getString("SBBM"));
                 lf.setDXMPYXKID(rs.getString("DXMPYXKID"));
                 lf.setXLMC(rs.getString("XLMC"));
-                lf.setSSDS(rs.getString("SSDS"));
+                lf.setSSDS(rs.getString("SSDSMC"));
                 lf.setXLZCD(rs.getString("XLZCD"));
                 lf.setJKXLCD(rs.getString("JKXLCD"));
                 lf.setSGDW(rs.getString("SGDW"));
                 lf.setTYRQ(rs.getString("TYRQ"));
                 lf.setJLDW(rs.getString("JLDW"));
-                lf.setZCDW(rs.getString("ZCDW"));
+                lf.setZCDW(rs.getString("ZCDWMC"));
                 lf.setZCBH(rs.getString("ZCBH"));
                 lf.setSJDW(rs.getString("SJDW"));
                 lf.setJSDW(rs.getString("JSDW"));

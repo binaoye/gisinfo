@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +110,7 @@ public class GaodeController {
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
     public Object AddUser(String name, String birth, String nation, String sex, String address, String code,String line, Integer inside, double lat, double lng,double distance) {
+        System.out.println("添加用户线路:"+line);
         LineInspector li = new LineInspector(name, birth, nation, sex, address, code, line, lat, lng,inside);
         li.setDistance(distance);
         li.setInside(inside);
@@ -127,11 +129,22 @@ public class GaodeController {
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
     public Object QueryInspector(String line) {
-        List<LineInspector> lst = lins.QueryLineInspector(line);
+        List<LineInspector> lst = tran(lins.QueryLineInspector(line));
         Map<String,Object> result = new HashMap<String, Object>();
         result.put("users", lst);
         result.put("count", lst.size());
         return result;
+    }
+
+    public List<LineInspector> tran(List<LineInspector> lst) {
+        List<LineInspector> resu = new ArrayList<>();
+        for(LineInspector ls:lst) {
+            LineInspector li = ls;
+            li.setDistance(ls.getDistance()/1000);
+            resu.add(li);
+        }
+        return resu;
+
     }
 
 

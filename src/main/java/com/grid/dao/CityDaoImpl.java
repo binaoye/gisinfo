@@ -132,7 +132,7 @@ public class CityDaoImpl implements CItyDao {
 
     @Override
     public List<LineInspector> QueryCityInspectors(String city) {
-        String sqlFormat = "SELECT b.* FROM T_TX_ZWYC_XL a join line_inspector b on a.oid=b.line where ssds='%s' ";
+        String sqlFormat = "select c.*,d.dwmc from (SELECT b.*,a.SBMC,a.SSDS FROM T_TX_ZWYC_XL a right join line_inspector b on a.oid=b.line where ssds='%s') c join (SELECT dwbm, dwmc FROM t_v_isc_dept where sjdwbm='008df5db70319f73e0508eoabd9b0002' group by dwbm,dwmc) d on c.ssds=d.dwbm ";
         String sql = String.format(sqlFormat, city);
         List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
             @Override
@@ -142,7 +142,10 @@ public class CityDaoImpl implements CItyDao {
                         rs.getString("address"), rs.getString("code"), rs.getString("line"),
                         rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
                 );
+//                li.setCityname(rs.getString("sjdwmc"));
+                li.setLinename(rs.getString("sbmc"));
                 li.setId(rs.getInt("id"));
+                li.setDept(rs.getString("dwmc"));
                 li.setId(0);
                 li.setDistance(rs.getDouble("distance"));
                 return li;
@@ -156,7 +159,8 @@ public class CityDaoImpl implements CItyDao {
     @Override
     public List<LineInspector> QueryAll() {
 //        String sqlFormat = "SELECT b.* FROM T_TX_ZWYC_XL a join line_inspector b on a.oid=b.line where ssds='%s' ";
-        String sql = "SELECT * FROM line_inspector";
+        String sql = "select c.*,d.dwmc from (SELECT b.*,a.SBMC,a.SSDS FROM T_TX_ZWYC_XL a right join line_inspector b on a.oid=b.line) c join (SELECT dwbm, dwmc FROM t_v_isc_dept where sjdwbm='008df5db70319f73e0508eoabd9b0002' group by dwbm,dwmc) d on c.ssds=d.dwbm";
+        System.out.println("sql:"+sql);
         List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
             @Override
             public LineInspector mapRow(ResultSet rs, int i) throws SQLException {
@@ -164,8 +168,12 @@ public class CityDaoImpl implements CItyDao {
                         rs.getString("birth"), rs.getString("nation"), rs.getString("sex"),
                         rs.getString("address"), rs.getString("code"), rs.getString("line"),
                         rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
+
                 );
+//                li.setCityname(rs.getString("sjdwmc"));
+                li.setLinename(rs.getString("sbmc"));
                 li.setId(rs.getInt("id"));
+                li.setDept(rs.getString("dwmc"));
                 li.setId(0);
                 li.setDistance(rs.getDouble("distance"));
                 return li;
