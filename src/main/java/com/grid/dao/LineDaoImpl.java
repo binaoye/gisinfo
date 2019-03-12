@@ -23,7 +23,7 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public List<LineEntity> QueryLines(String city) {
-        String sql = "SELECT * FROM T_TX_ZWYC_XL where ssds='" + city + "'";
+        String sql = "SELECT * FROM T_TX_ZWYC_XL where ssds='" + city + "' and xllx=1 and apptype!=5";
         List<LineEntity> list = jdbcTemplate.query(sql, new RowMapper<LineEntity>() {
             //映射每行数据
             @Override
@@ -137,7 +137,7 @@ public class LineDaoImpl implements LineDao {
         xlxzmap.put("3","分支线");
         xlxzmap.put("4","分段线路");
         xlxzmap.put("5","馈线");
-        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s'";
+        String sqlFormatxl = "SELECT a.DYDJ,XLXZ FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s' and yxzt=20 and xllx=1";
         List<LineFeature> lf = jdbcTemplate.query(String.format(sqlFormatxl, line), new RowMapper<LineFeature>() {
             @Override
             public LineFeature mapRow(ResultSet rs, int i) throws SQLException {
@@ -295,7 +295,7 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public LineFeature QueryLineFeature(String line) {
-        String sqlFormat = "SELECT * FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s'";
+        String sqlFormat = "SELECT * FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s' and xllx=1 and yxzt=20 and apptype!=5 and xllx=1";
         String sql = String.format(sqlFormat, line);
         Map<String, String> xlxzmap = new HashMap<String, String>();
         xlxzmap.put("1","主线");
