@@ -29,6 +29,7 @@ public class OcrTest {
 //        for (Map.Entry<Integer, String> entry : sortMap.entrySet()) {
 //            System.out.println(entry.getKey() + " " + entry.getValue());
 //        }
+        System.out.println(Integer.valueOf("21",16));
         String[] lst = {"1","2"};
         System.out.println(String.join(",", lst));
 

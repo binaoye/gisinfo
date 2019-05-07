@@ -160,6 +160,11 @@ public class MapController {
         return this.lins.QueryLinePoint(line);
     }
 
+    /**
+     * 查询城市所有点
+     * @param city
+     * @return
+     */
     @RequestMapping("/queryCityLinePoints")
     @ResponseBody
     public Object QueryCityLinePoints(String city) {
@@ -204,6 +209,11 @@ public class MapController {
     }
 
 
+    /**
+     * 判定阀值
+     * @param thres
+     * @return
+     */
     @RequestMapping("/setthres")
     @ResponseBody
     public Object SetThres(double thres) {
@@ -251,6 +261,11 @@ public class MapController {
         return result;
     }
 
+    /**
+     * 查询线路信息
+     * @param line
+     * @return
+     */
     @RequestMapping("/queryLineFeature")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)

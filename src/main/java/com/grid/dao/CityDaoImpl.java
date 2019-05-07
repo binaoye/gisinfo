@@ -159,7 +159,7 @@ public class CityDaoImpl implements CItyDao {
     @Override
     public List<LineInspector> QueryAll() {
 //        String sqlFormat = "SELECT b.* FROM T_TX_ZWYC_XL a join line_inspector b on a.oid=b.line where ssds='%s' ";
-        String sql = "select c.*,d.dwmc from (SELECT b.*,a.SBMC,a.SSDS FROM T_TX_ZWYC_XL a right join line_inspector b on a.oid=b.line WHERE xllx=1 and apptype!=5) c join (SELECT dwbm, dwmc FROM t_v_isc_dept where sjdwbm='008df5db70319f73e0508eoabd9b0002' group by dwbm,dwmc) d on c.ssds=d.dwbm";
+        String sql = "select c.*,d.dwmc from (SELECT b.*,a.SBMC,a.SSDS FROM T_TX_ZWYC_XL a right join line_inspector b on a.oid=b.line WHERE xllx=1 and apptype!=5 or apptype is null) c join (SELECT dwbm, dwmc FROM t_v_isc_dept where sjdwbm='008df5db70319f73e0508eoabd9b0002' group by dwbm,dwmc) d on c.ssds=d.dwbm";
         System.out.println("sql:"+sql);
         List<LineInspector> list = jdbcTemplate.query(sql, new RowMapper<LineInspector>() {
             @Override
