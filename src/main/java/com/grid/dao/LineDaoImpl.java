@@ -177,7 +177,7 @@ public class LineDaoImpl implements LineDao {
                 );
                 li.setId(rs.getInt("id"));
 //                li.setId(0);
-                li.setDistance(rs.getDouble("distance"));
+//                li.setDistance(rs.getDouble("distance"));
                 return li;
             }
         });
@@ -189,7 +189,7 @@ public class LineDaoImpl implements LineDao {
     public Integer AddUser(LineInspector user) {
         String sqlFormat = "INSERT INTO line_inspector( name,birth,nation,sex,address,code, line, inside, lat, lng, distance)" +
                 " VALUES('%s', '%s', '%s','%s', '%s', '%s', '%s', %d, %f, %f, %f)";
-        String sql = String.format(sqlFormat, user.getName(), user.getBirth(), user.getNation(), user.getSex(), user.getAddress(), user.getCode(), user.getLine(), user.getInside(), user.getLat(), user.getLng(), user.getDistance());
+        String sql = String.format(sqlFormat, user.getName(), user.getBirth(), user.getNation(), user.getSex(), user.getAddress(), user.getCode(), user.getLine(),  user.getLat(), user.getLng());
         KeyHolder kh = new GeneratedKeyHolder();
         System.out.println(sql);
         jdbcTemplate.update(new PreparedStatementCreator() {
@@ -231,7 +231,7 @@ public class LineDaoImpl implements LineDao {
                 );
                 li.setId(rs.getInt("id"));
                 li.setId(0);
-                li.setDistance(rs.getDouble("distance"));
+//                li.setDistance(rs.getDouble("distance"));
                 return li;
             }
         });

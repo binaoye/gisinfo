@@ -143,11 +143,11 @@ public class CityDaoImpl implements CItyDao {
                         rs.getDouble("lat"), rs.getDouble("lng"),rs.getInt("inside")
                 );
 //                li.setCityname(rs.getString("sjdwmc"));
-                li.setLinename(rs.getString("sbmc"));
+//                li.setLinename(rs.getString("sbmc"));
                 li.setId(rs.getInt("id"));
                 li.setDept(rs.getString("dwmc"));
                 li.setId(0);
-                li.setDistance(rs.getDouble("distance"));
+//                li.setDistance(rs.getDouble("distance"));
                 return li;
             }
         });
@@ -171,11 +171,11 @@ public class CityDaoImpl implements CItyDao {
 
                 );
 //                li.setCityname(rs.getString("sjdwmc"));
-                li.setLinename(rs.getString("sbmc"));
+//                li.setLinename(rs.getString("sbmc"));
                 li.setId(rs.getInt("id"));
                 li.setDept(rs.getString("dwmc"));
                 li.setId(0);
-                li.setDistance(rs.getDouble("distance"));
+//                li.setDistance(rs.getDouble("distance"));
                 return li;
             }
         });

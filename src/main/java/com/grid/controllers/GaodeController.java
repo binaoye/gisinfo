@@ -112,13 +112,14 @@ public class GaodeController {
     public Object AddUser(String name, String birth, String nation, String sex, String address, String code,String line, Integer inside, double lat, double lng,double distance) {
         System.out.println("添加用户线路:"+line);
         LineInspector li = new LineInspector(name, birth, nation, sex, address, code, line, lat, lng,inside);
-        li.setDistance(distance);
-        li.setInside(inside);
+//        li.setDistance(distance);
+//        li.setInside(inside);
         Integer id = lins.AddUser(li);
         Map<String, Object> result = new HashMap<String,Object>();
         result.put("id", id);
         return result;
     }
+
 
     /**
      * 查询线路所有人员
@@ -140,7 +141,7 @@ public class GaodeController {
         List<LineInspector> resu = new ArrayList<>();
         for(LineInspector ls:lst) {
             LineInspector li = ls;
-            li.setDistance(ls.getDistance()/1000);
+//            li.setDistance(ls.getDistance()/1000);
             resu.add(li);
         }
         return resu;

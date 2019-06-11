@@ -9,11 +9,8 @@ public class LineInspector {
     private String address;
     private String code;
     private String line;
-    private Integer inside;
     private double lat;
     private double lng;
-    private double distance;
-    private String linename;
     private String cityname;
     private String dept;
 
@@ -25,13 +22,6 @@ public class LineInspector {
         this.dept = dept;
     }
 
-    public String getLinename() {
-        return linename;
-    }
-
-    public void setLinename(String linename) {
-        this.linename = linename;
-    }
 
     public String getCityname() {
         return cityname;
@@ -41,13 +31,6 @@ public class LineInspector {
         this.cityname = cityname;
     }
 
-    public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
 
     public double getLat() {
         return lat;
@@ -65,13 +48,6 @@ public class LineInspector {
         this.lng = lng;
     }
 
-    public Integer getInside() {
-        return inside;
-    }
-
-    public void setInside(Integer inside) {
-        this.inside = inside;
-    }
 
     public LineInspector() {
     }
@@ -86,7 +62,6 @@ public class LineInspector {
         this.line = line;
         this.lat = lat;
         this.lng = lng;
-        this.inside = inside;
     }
 
     public String getLine() {

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.grid.dal.dao.LineInspectorMapper">
+  <resultMap id="BaseResultMap" type="com.grid.dal.domain.LineInspector">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="BIRTH" jdbcType="VARCHAR" property="birth" />
+    <result column="NATION" jdbcType="VARCHAR" property="nation" />
+    <result column="SEX" jdbcType="VARCHAR" property="sex" />
+    <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="LNG" jdbcType="DECIMAL" property="lng" />
+    <result column="LAT" jdbcType="DECIMAL" property="lat" />
+    <result column="CITYNAME" jdbcType="VARCHAR" property="cityname" />
+    <result column="DEPT" jdbcType="VARCHAR" property="dept" />
+  </resultMap>
+  <resultMap id="JoinResultMap" type="com.grid.dal.domain.Inspectors">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="BIRTH" jdbcType="VARCHAR" property="birth" />
+    <result column="NATION" jdbcType="VARCHAR" property="nation" />
+    <result column="SEX" jdbcType="VARCHAR" property="sex" />
+    <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="LNG" jdbcType="DECIMAL" property="lng" />
+    <result column="LAT" jdbcType="DECIMAL" property="lat" />
+    <result column="CITYNAME" jdbcType="VARCHAR" property="cityname" />
+    <result column="DEPT" jdbcType="VARCHAR" property="dept" />
+    <result column="LINE" jdbcType="VARCHAR" property="line" />
+    <result column="LINENAME" jdbcType="VARCHAR" property="linename" />
+    <result column="DISTANCE" jdbcType="DECIMAL" property="distance" />
+    <result column="INSIDE" jdbcType="DECIMAL" property="inside" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    ID, NAME, BIRTH, NATION, SEX, ADDRESS, CODE, LNG, LAT, CITYNAME, DEPT
+  </sql>
+  <select id="selectByExample" parameterType="com.grid.dal.domain.LineInspectorExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from LINE_INSPECTOR
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from LINE_INSPECTOR
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from LINE_INSPECTOR
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.grid.dal.domain.LineInspectorExample">
+    delete from LINE_INSPECTOR
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.grid.dal.domain.LineInspector">
+    insert into LINE_INSPECTOR (ID, NAME, BIRTH, 
+      NATION, SEX, ADDRESS, 
+      CODE, LNG, LAT, CITYNAME, 
+      DEPT)
+    values (#{id,jdbcType=DECIMAL}, #{name,jdbcType=VARCHAR}, #{birth,jdbcType=VARCHAR}, 
+      #{nation,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{lng,jdbcType=DECIMAL}, #{lat,jdbcType=DECIMAL}, #{cityname,jdbcType=VARCHAR}, 
+      #{dept,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.grid.dal.domain.LineInspector">
+    insert into LINE_INSPECTOR
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="birth != null">
+        BIRTH,
+      </if>
+      <if test="nation != null">
+        NATION,
+      </if>
+      <if test="sex != null">
+        SEX,
+      </if>
+      <if test="address != null">
+        ADDRESS,
+      </if>
+      <if test="code != null">
+        CODE,
+      </if>
+      <if test="lng != null">
+        LNG,
+      </if>
+      <if test="lat != null">
+        LAT,
+      </if>
+      <if test="cityname != null">
+        CITYNAME,
+      </if>
+      <if test="dept != null">
+        DEPT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="birth != null">
+        #{birth,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null">
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null">
+        #{lng,jdbcType=DECIMAL},
+      </if>
+      <if test="lat != null">
+        #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="cityname != null">
+        #{cityname,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null">
+        #{dept,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.grid.dal.domain.LineInspectorExample" resultType="java.lang.Long">
+    select count(*) from LINE_INSPECTOR
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update LINE_INSPECTOR
+    <set>
+      <if test="record.id != null">
+        ID = #{record.id,jdbcType=DECIMAL},
+      </if>
+      <if test="record.name != null">
+        NAME = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.birth != null">
+        BIRTH = #{record.birth,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nation != null">
+        NATION = #{record.nation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sex != null">
+        SEX = #{record.sex,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        ADDRESS = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.code != null">
+        CODE = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lng != null">
+        LNG = #{record.lng,jdbcType=DECIMAL},
+      </if>
+      <if test="record.lat != null">
+        LAT = #{record.lat,jdbcType=DECIMAL},
+      </if>
+      <if test="record.cityname != null">
+        CITYNAME = #{record.cityname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dept != null">
+        DEPT = #{record.dept,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update LINE_INSPECTOR
+    set ID = #{record.id,jdbcType=DECIMAL},
+      NAME = #{record.name,jdbcType=VARCHAR},
+      BIRTH = #{record.birth,jdbcType=VARCHAR},
+      NATION = #{record.nation,jdbcType=VARCHAR},
+      SEX = #{record.sex,jdbcType=VARCHAR},
+      ADDRESS = #{record.address,jdbcType=VARCHAR},
+      CODE = #{record.code,jdbcType=VARCHAR},
+      LNG = #{record.lng,jdbcType=DECIMAL},
+      LAT = #{record.lat,jdbcType=DECIMAL},
+      CITYNAME = #{record.cityname,jdbcType=VARCHAR},
+      DEPT = #{record.dept,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.grid.dal.domain.LineInspector">
+    update LINE_INSPECTOR
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="birth != null">
+        BIRTH = #{birth,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null">
+        NATION = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        SEX = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null">
+        LNG = #{lng,jdbcType=DECIMAL},
+      </if>
+      <if test="lat != null">
+        LAT = #{lat,jdbcType=DECIMAL},
+      </if>
+      <if test="cityname != null">
+        CITYNAME = #{cityname,jdbcType=VARCHAR},
+      </if>
+      <if test="dept != null">
+        DEPT = #{dept,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.grid.dal.domain.LineInspector">
+    update LINE_INSPECTOR
+    set NAME = #{name,jdbcType=VARCHAR},
+      BIRTH = #{birth,jdbcType=VARCHAR},
+      NATION = #{nation,jdbcType=VARCHAR},
+      SEX = #{sex,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      CODE = #{code,jdbcType=VARCHAR},
+      LNG = #{lng,jdbcType=DECIMAL},
+      LAT = #{lat,jdbcType=DECIMAL},
+      CITYNAME = #{cityname,jdbcType=VARCHAR},
+      DEPT = #{dept,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="listUsers" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR WHERE ID IN (#{users})
+  </select>
+</mapper>

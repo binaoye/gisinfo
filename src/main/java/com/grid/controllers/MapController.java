@@ -277,6 +277,12 @@ public class MapController {
     }
 
 
+    /**
+     * 根据线路批量上传
+     * @param file
+     * @param line
+     * @return
+     */
     @RequestMapping("/updateusers")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
@@ -314,13 +320,13 @@ public class MapController {
                         DistResult dr = calcDist(address,line);
 //                        System.out.println("测试距离"+dr.getCounty());
                         if(dr.getLat()>0) {
-                            li.setDistance(dr.getDist());
+//                            li.setDistance(dr.getDist());
                             if(dr.getDist()<=thres) {
-                                li.setInside(1);
+//                                li.setInside(1);
                             }else if(dr.getDist()==1000) {
-                                li.setInside(2);
+//                                li.setInside(2);
                             }else {
-                                li.setInside(0);
+//                                li.setInside(0);
                             }
                             li.setAddress(address);
                             li.setLine(line);
