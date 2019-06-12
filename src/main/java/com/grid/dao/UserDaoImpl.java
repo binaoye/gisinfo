@@ -3,6 +3,7 @@ package com.grid.dao;
 
 import com.grid.dal.dao.LineInspectorMapper;
 import com.grid.dal.dao.LineUsersMapper;
+import com.grid.dal.domain.Inspectors;
 import com.grid.dal.domain.LineInspector;
 import com.grid.dal.domain.LineInspectorExample;
 import com.grid.dal.domain.LineUsers;
@@ -61,13 +62,29 @@ public class UserDaoImpl implements UserDao {
     @Override
     public int AddUserLine(LineUsers lineUsers) {
         System.out.println("添加对应关系"+lineUsers);
+        // 先检测是否已绑定
         return lineUsersMapper.insert(lineUsers);
     }
 
     @Override
-    public List<LineInspector> listUsers(String[] users) {
+    public List<Inspectors> listUsers(String[] users) {
         String allstr = String.join(",", users);
         return lineInspectorMapper.listUsers(allstr);
+    }
+
+    @Override
+    public List<Inspectors> listAllUsers() {
+        return lineInspectorMapper.listAllUsers();
+    }
+
+    @Override
+    public List<Inspectors> listCityUsers(String city) {
+        return lineInspectorMapper.listCityUsers(city);
+    }
+
+    @Override
+    public List<Inspectors> listLineUsers(Long line) {
+        return lineInspectorMapper.listLineUsers(line);
     }
 
 }

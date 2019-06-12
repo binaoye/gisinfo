@@ -319,7 +319,18 @@
       DEPT = #{dept,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=DECIMAL}
   </update>
-  <select id="listUsers" parameterType="java.lang.String" resultMap="BaseResultMap">
-    SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR WHERE ID IN (#{users})
+  <select id="listUsers" parameterType="java.lang.String" resultMap="JoinResultMap">
+    SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR WHERE a.ID IN (#{users})
   </select>
+
+  <select id="listAllUsers" resultMap="JoinResultMap">
+    SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR
+  </select>
+  <select id="listCityUsers" resultMap="JoinResultMap" parameterType="java.lang.String">
+    select c.* FROM (SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR) c JOIN t_tx_zwyc_xl d on c.LINE=d.OID WHERE ssds=#{city}
+  </select>
+  <select id="listLineUsers" resultMap="JoinResultMap" parameterType="java.lang.Long">
+    SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR WHERE LINE=#{line}
+  </select>
+
 </mapper>

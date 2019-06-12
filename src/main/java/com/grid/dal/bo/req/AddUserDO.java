@@ -9,7 +9,7 @@ public class AddUserDO extends BaseDO {
     private String sex;
     private String address;
     private String code;
-    private String line;
+    private Long line;
     private short inside;
     private double lat;
     private double lng;
@@ -63,11 +63,11 @@ public class AddUserDO extends BaseDO {
         this.code = code;
     }
 
-    public String getLine() {
+    public Long getLine() {
         return line;
     }
 
-    public void setLine(String line) {
+    public void setLine(Long line) {
         this.line = line;
     }
 

@@ -305,62 +305,52 @@ public class LineUsersExample {
             return (Criteria) this;
         }
 
-        public Criteria andLineEqualTo(String value) {
+        public Criteria andLineEqualTo(Long value) {
             addCriterion("LINE =", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotEqualTo(String value) {
+        public Criteria andLineNotEqualTo(Long value) {
             addCriterion("LINE <>", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineGreaterThan(String value) {
+        public Criteria andLineGreaterThan(Long value) {
             addCriterion("LINE >", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineGreaterThanOrEqualTo(String value) {
+        public Criteria andLineGreaterThanOrEqualTo(Long value) {
             addCriterion("LINE >=", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLessThan(String value) {
+        public Criteria andLineLessThan(Long value) {
             addCriterion("LINE <", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLessThanOrEqualTo(String value) {
+        public Criteria andLineLessThanOrEqualTo(Long value) {
             addCriterion("LINE <=", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLike(String value) {
-            addCriterion("LINE like", value, "line");
-            return (Criteria) this;
-        }
-
-        public Criteria andLineNotLike(String value) {
-            addCriterion("LINE not like", value, "line");
-            return (Criteria) this;
-        }
-
-        public Criteria andLineIn(List<String> values) {
+        public Criteria andLineIn(List<Long> values) {
             addCriterion("LINE in", values, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotIn(List<String> values) {
+        public Criteria andLineNotIn(List<Long> values) {
             addCriterion("LINE not in", values, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineBetween(String value1, String value2) {
+        public Criteria andLineBetween(Long value1, Long value2) {
             addCriterion("LINE between", value1, value2, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotBetween(String value1, String value2) {
+        public Criteria andLineNotBetween(Long value1, Long value2) {
             addCriterion("LINE not between", value1, value2, "line");
             return (Criteria) this;
         }

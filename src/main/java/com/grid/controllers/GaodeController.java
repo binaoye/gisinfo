@@ -1,6 +1,9 @@
 package com.grid.controllers;
 
 import com.grid.Entity.LineInspector;
+import com.grid.dal.domain.Inspectors;
+import com.grid.dal.domain.LineUsers;
+import com.grid.dao.UserDao;
 import com.grid.service.GeoService;
 import com.grid.service.LineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +27,9 @@ public class GaodeController {
 
     @Autowired
     private GeoService gserv;
+
+    @Autowired
+    private UserDao userDao;
 
     /**
      * 查询第一级区划
@@ -109,14 +116,43 @@ public class GaodeController {
     @RequestMapping("/adduser")
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
-    public Object AddUser(String name, String birth, String nation, String sex, String address, String code,String line, Integer inside, double lat, double lng,double distance) {
-        System.out.println("添加用户线路:"+line);
-        LineInspector li = new LineInspector(name, birth, nation, sex, address, code, line, lat, lng,inside);
-//        li.setDistance(distance);
-//        li.setInside(inside);
-        Integer id = lins.AddUser(li);
-        Map<String, Object> result = new HashMap<String,Object>();
-        result.put("id", id);
+    public Object AddUser(String name, String birth, String nation, String sex, String address, String code,String line, Short inside, double lat, double lng,double distance) {
+//        System.out.println("添加用户线路:"+line);
+//        LineInspector li = new LineInspector(name, birth, nation, sex, address, code, line, lat, lng,inside);
+////        li.setDistance(distance);
+////        li.setInside(inside);
+//        Integer id = lins.AddUser(li);
+//        Map<String, Object> result = new HashMap<String,Object>();
+//        result.put("id", id);
+        Map<String, Object> result = new HashMap<String, Object>();
+        /*
+        先判断用户是否已存在， 如果存在添加关联记录，否则先添加人员再添加关联记录
+         */
+        com.grid.dal.domain.LineInspector example = new com.grid.dal.domain.LineInspector();
+        example.setCode(code);
+        example.setLat(new BigDecimal(lat));
+        example.setLng(new BigDecimal(lat));
+        example.setName(name);
+        example.setBirth(birth);
+        example.setNation(nation);
+        example.setSex(sex);
+        example.setAddress(address);
+        System.out.println(example.getCode());
+        com.grid.dal.domain.LineInspector inspector = userDao.exists(example);
+        // 添加关联记录
+        LineUsers lineUsers = new LineUsers();
+        lineUsers.setDistance(new BigDecimal(distance));
+        lineUsers.setInside(inside);
+        lineUsers.setInsname(inspector.getName());
+        Long li = Long.valueOf(line);
+        lineUsers.setLine(li);
+        lineUsers.setInspector(inspector.getId());
+        int resu = userDao.AddUserLine(lineUsers);
+        if(resu < 1) {
+            result.put("id", "-1");
+        }
+        result.put("id", inspector.getId());
+
         return result;
     }
 
@@ -130,10 +166,13 @@ public class GaodeController {
     @ResponseBody
     @CrossOrigin(origins = "*", maxAge = 3600)
     public Object QueryInspector(String line) {
-        List<LineInspector> lst = tran(lins.QueryLineInspector(line));
+//        List<LineInspector> lst = tran(lins.QueryLineInspector(line));
+        Long li = Long.valueOf(line);
+        List<Inspectors> inspectors = userDao.listLineUsers(li);
+
         Map<String,Object> result = new HashMap<String, Object>();
-        result.put("users", lst);
-        result.put("count", lst.size());
+        result.put("users", inspectors);
+        result.put("count", inspectors.size());
         return result;
     }
 

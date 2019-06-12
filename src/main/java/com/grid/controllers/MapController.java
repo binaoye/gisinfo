@@ -50,7 +50,7 @@ public class MapController {
 
     public DistResult calcDist(String posi, String line) {
         DistResult result = new DistResult();
-        System.out.println("posi"+posi);
+        System.out.println("检查地址"+posi);
         if(posi.contains("甘肃省")){
             List citys = this.cache.get("city").get("city");
             posi = posi.replace("甘肃省","");
@@ -337,6 +337,8 @@ public class MapController {
                             li.setName(sheet.getRow(i).getCell(1).getStringCellValue());
                             li.setSex(sheet.getRow(i).getCell(2).getStringCellValue());
                             li.setNation(sheet.getRow(i).getCell(3).getStringCellValue());
+                            // 此处与/user/add接口中的方式一致
+
                             lins.delUser(li.getCode());
                             lins.AddUser(li);
                         }else {

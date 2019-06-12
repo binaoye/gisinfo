@@ -5,7 +5,7 @@
     <id column="ID" jdbcType="DECIMAL" property="id" />
     <result column="INSPECTOR" jdbcType="DECIMAL" property="inspector" />
     <result column="INSNAME" jdbcType="VARCHAR" property="insname" />
-    <result column="LINE" jdbcType="VARCHAR" property="line" />
+    <result column="LINE" jdbcType="DECIMAL" property="line" />
     <result column="LINENAME" jdbcType="VARCHAR" property="linename" />
     <result column="DISTANCE" jdbcType="DECIMAL" property="distance" />
     <result column="INSIDE" jdbcType="DECIMAL" property="inside" />
@@ -106,7 +106,7 @@
       LINE, LINENAME, DISTANCE, 
       INSIDE)
     values (#{id,jdbcType=DECIMAL}, #{inspector,jdbcType=DECIMAL}, #{insname,jdbcType=VARCHAR}, 
-      #{line,jdbcType=VARCHAR}, #{linename,jdbcType=VARCHAR}, #{distance,jdbcType=DECIMAL}, 
+      #{line,jdbcType=DECIMAL}, #{linename,jdbcType=VARCHAR}, #{distance,jdbcType=DECIMAL}, 
       #{inside,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.grid.dal.domain.LineUsers">
@@ -145,7 +145,7 @@
         #{insname,jdbcType=VARCHAR},
       </if>
       <if test="line != null">
-        #{line,jdbcType=VARCHAR},
+        #{line,jdbcType=DECIMAL},
       </if>
       <if test="linename != null">
         #{linename,jdbcType=VARCHAR},
@@ -177,7 +177,7 @@
         INSNAME = #{record.insname,jdbcType=VARCHAR},
       </if>
       <if test="record.line != null">
-        LINE = #{record.line,jdbcType=VARCHAR},
+        LINE = #{record.line,jdbcType=DECIMAL},
       </if>
       <if test="record.linename != null">
         LINENAME = #{record.linename,jdbcType=VARCHAR},
@@ -198,7 +198,7 @@
     set ID = #{record.id,jdbcType=DECIMAL},
       INSPECTOR = #{record.inspector,jdbcType=DECIMAL},
       INSNAME = #{record.insname,jdbcType=VARCHAR},
-      LINE = #{record.line,jdbcType=VARCHAR},
+      LINE = #{record.line,jdbcType=DECIMAL},
       LINENAME = #{record.linename,jdbcType=VARCHAR},
       DISTANCE = #{record.distance,jdbcType=DECIMAL},
       INSIDE = #{record.inside,jdbcType=DECIMAL}
@@ -216,7 +216,7 @@
         INSNAME = #{insname,jdbcType=VARCHAR},
       </if>
       <if test="line != null">
-        LINE = #{line,jdbcType=VARCHAR},
+        LINE = #{line,jdbcType=DECIMAL},
       </if>
       <if test="linename != null">
         LINENAME = #{linename,jdbcType=VARCHAR},
@@ -234,7 +234,7 @@
     update LINEUSERS
     set INSPECTOR = #{inspector,jdbcType=DECIMAL},
       INSNAME = #{insname,jdbcType=VARCHAR},
-      LINE = #{line,jdbcType=VARCHAR},
+      LINE = #{line,jdbcType=DECIMAL},
       LINENAME = #{linename,jdbcType=VARCHAR},
       DISTANCE = #{distance,jdbcType=DECIMAL},
       INSIDE = #{inside,jdbcType=DECIMAL}

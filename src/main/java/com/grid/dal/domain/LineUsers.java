@@ -9,7 +9,7 @@ public class LineUsers extends BaseDO {
 
     private String insname;
 
-    private String line;
+    private Long line;
 
     private String linename;
 
@@ -41,12 +41,12 @@ public class LineUsers extends BaseDO {
         this.insname = insname == null ? null : insname.trim();
     }
 
-    public String getLine() {
+    public Long getLine() {
         return line;
     }
 
-    public void setLine(String line) {
-        this.line = line == null ? null : line.trim();
+    public void setLine(Long line) {
+        this.line = line;
     }
 
     public String getLinename() {
