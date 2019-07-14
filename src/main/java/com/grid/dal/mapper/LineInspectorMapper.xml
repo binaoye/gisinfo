@@ -330,7 +330,7 @@
     select c.* FROM (SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR) c JOIN t_tx_zwyc_xl d on c.LINE=d.OID WHERE ssds=#{city}
   </select>
   <select id="listLineUsers" resultMap="JoinResultMap" parameterType="java.lang.Long">
-    SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR WHERE LINE=#{line}
+    SELECT a.*,b.LINE,b.LINENAME,b.DISTANCE,b.INSIDE FROM LINE_INSPECTOR a JOIN LINEUSERS b ON a.ID=b.INSPECTOR WHERE b.LINE=#{line}
   </select>
 
 </mapper>

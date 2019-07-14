@@ -22,8 +22,8 @@ import com.grid.utils.*;
 @RestController
 @CrossOrigin(origins = "*",maxAge = 3600)
 public class GaodeController {
-    @Autowired
-    private LineService lins;
+//    @Autowired
+//    private LineService lins;
 
     @Autowired
     private GeoService gserv;
@@ -40,6 +40,7 @@ public class GaodeController {
     @CrossOrigin(origins = "*",maxAge = 3600)
     public Object QueryCity() {
         Map<String,Object> result = new HashMap<String, Object>();
+        System.out.println("-----");
         List lst = gserv.GetCities();
         result.put("result", lst);
         result.put("count", lst.size());
@@ -168,6 +169,7 @@ public class GaodeController {
     public Object QueryInspector(String line) {
 //        List<LineInspector> lst = tran(lins.QueryLineInspector(line));
         Long li = Long.valueOf(line);
+        System.out.println(li);
         List<Inspectors> inspectors = userDao.listLineUsers(li);
 
         Map<String,Object> result = new HashMap<String, Object>();

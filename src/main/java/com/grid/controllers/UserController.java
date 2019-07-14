@@ -45,6 +45,7 @@ public class UserController {
          */
         LineInspector example = new LineInspector();
         example.setCode(req.getCode());
+        System.out.println(req.getLat()+","+req.getLng());
         example.setLat(new BigDecimal(req.getLat()));
         example.setLng(new BigDecimal(req.getLng()));
         example.setName(req.getName());
@@ -52,7 +53,7 @@ public class UserController {
         example.setNation(req.getNation());
         example.setSex(req.getSex());
         example.setAddress(req.getAddress());
-        System.out.println(example.getCode());
+        System.out.println(example.getCode()+","+example.getLat()+","+example.getLng());
         LineInspector inspector = userDao.exists(example);
         // 添加关联记录
         LineUsers lineUsers = new LineUsers();

@@ -55,7 +55,12 @@ public class UserDaoImpl implements UserDao {
         }
         // 不存在，插入记录
         lineInspectorMapper.insert(inspector);
-
+//        inspector.setId(id);
+        lineInspectors = lineInspectorMapper.selectByExample(example);
+        if(lineInspectors.size() > 0) {
+            System.out.println("已找到");
+            return lineInspectors.get(0);
+        }
         return inspector;
     }
 
