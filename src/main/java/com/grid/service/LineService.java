@@ -30,4 +30,6 @@ public interface LineService {
     List<LineInspector> QueryAllInspectors();
 
     void delUser(String code);
+
+    Double linelen(String line);
 }

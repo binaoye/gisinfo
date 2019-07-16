@@ -132,7 +132,7 @@ public class GaodeController {
         com.grid.dal.domain.LineInspector example = new com.grid.dal.domain.LineInspector();
         example.setCode(code);
         example.setLat(new BigDecimal(lat));
-        example.setLng(new BigDecimal(lat));
+        example.setLng(new BigDecimal(lng));
         example.setName(name);
         example.setBirth(birth);
         example.setNation(nation);

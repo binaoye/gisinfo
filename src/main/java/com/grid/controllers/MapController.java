@@ -1,6 +1,8 @@
 package com.grid.controllers;
 
 import com.grid.Entity.*;
+import com.grid.dal.domain.LineUsers;
+import com.grid.dao.UserDao;
 import com.grid.service.LineService;
 import com.grid.utils.LocationUtil;
 import com.grid.utils.csvUtil;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
@@ -27,6 +30,8 @@ import java.util.*;
 public class MapController {
     @Autowired
     private LineService lins;
+    @Autowired
+    private UserDao userDao;
     InputStream in = this.getClass().getResourceAsStream("/districts.csv");
     private Map<String, Map<String,List>> cache = csvUtil.readVillages(this.in);
     private double thres = 5000.0;
@@ -101,6 +106,7 @@ public class MapController {
                 village = travel(vil.replace("家", ""), villages);
             }
             GeoCache ca = this.lins.GeoEncode(city,county,street,village);
+            System.out.println(ca.getLatitude()+","+ca.getLongitude());
             result.setLat(ca.getLatitude());
             result.setLng(ca.getLongitude());
             result.setCity(city);
@@ -231,6 +237,7 @@ public class MapController {
         GeoCache ca = this.lins.GeoEncode(city,county,street,village);
         result.put("lat", ca.getLatitude());
         result.put("lng", ca.getLongitude());
+//        System.out.println(ca.getLatitude(),ca.getLongitude());
         // 距离判定
         Map<String,double[][]> points = this.lins.ListLinePoints(line);
         double[][] ps = points.get(line);
@@ -308,17 +315,20 @@ public class MapController {
             if (null != book) {
                 // ID,姓名，性别，民族，地址，生日，号码
                 Sheet sheet = book.getSheetAt(0);
-//                System.out.println("总长度"+sheet.getLastRowNum());
+                System.out.println("总长度"+sheet.getLastRowNum());
                 for (int i = 0; i < sheet.getLastRowNum(); i++) {
-                    if(sheet.getRow(i).getCell(5) != null & !sheet.getRow(i).getCell(1).equals("姓名")) {
+//                    if(sheet.getRow(i).getCell(5) != null){
+                    if(true){
+                        i = i+ 1;
                         LineInspector li = new LineInspector();
                         Cell cell4 = sheet.getRow(i).getCell(5);//假如row.getCell(0)中的数值为12345678910123
                         cell4.setCellType(HSSFCell.CELL_TYPE_STRING);
                         Cell cell5 = sheet.getRow(i).getCell(6);//假如row.getCell(0)中的数值为12345678910123
                         cell5.setCellType(HSSFCell.CELL_TYPE_STRING);
                         String address = sheet.getRow(i).getCell(4).getStringCellValue();
+                        address = address.replace("地址","");
                         DistResult dr = calcDist(address,line);
-//                        System.out.println("测试距离"+dr.getCounty());
+                        System.out.println("测试距离"+dr.getLat()+","+address);
                         if(dr.getLat()>0) {
 //                            li.setDistance(dr.getDist());
                             if(dr.getDist()<=thres) {
@@ -338,9 +348,41 @@ public class MapController {
                             li.setSex(sheet.getRow(i).getCell(2).getStringCellValue());
                             li.setNation(sheet.getRow(i).getCell(3).getStringCellValue());
                             // 此处与/user/add接口中的方式一致
+                            com.grid.dal.domain.LineInspector example = new com.grid.dal.domain.LineInspector();
+                            example.setLat(new BigDecimal(li.getLat()));
+                            example.setLng(new BigDecimal(li.getLng()));
+                            example.setName(li.getName());
+                            example.setBirth(li.getBirth());
+                            example.setNation(li.getNation());
+                            example.setSex(li.getSex());
+                            example.setAddress(li.getAddress());
+                            example.setCode(li.getCode());
 
-                            lins.delUser(li.getCode());
-                            lins.AddUser(li);
+                            System.out.println(example.getCode()+","+example.getLat()+","+example.getLng());
+                            com.grid.dal.domain.LineInspector inspector = userDao.exists(example);
+                            // 添加关联记录
+                            LineUsers lineUsers = new LineUsers();
+                            // 查询线路长度
+                            Double len = lins.linelen(line);
+                            System.out.println("--------");
+                            System.out.println(len);
+                            lineUsers.setDistance(new BigDecimal(dr.getDist()/1000+len*2+1));
+                            if(dr.getDist()<=thres) {
+                                lineUsers.setInside((short)1);
+//                                li.setInside(1);
+                            }else if(dr.getDist()==1000) {
+//                                li.setInside(2);
+                                lineUsers.setInside((short)2);
+                            }else {
+                                lineUsers.setInside((short)0);
+                            }
+                            lineUsers.setInsname(inspector.getName());
+                            Long lil = Long.valueOf(line);
+                            lineUsers.setLine(lil);
+                            lineUsers.setInspector(inspector.getId());
+                            int resu = userDao.AddUserLine(lineUsers);
+//                            lins.delUser(li.getCode());
+//                            lins.AddUser(li);
                         }else {
                             if(sheet.getRow(i).getCell(4).getStringCellValue().contains("甘肃省")) {
                                 failList.add(sheet.getRow(i).getCell(1).getStringCellValue());
