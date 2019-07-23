@@ -298,7 +298,7 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public LineFeature QueryLineFeature(String line) {
-        String sqlFormat = "SELECT * FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s' and xllx=1 and yxzt=20 and apptype!=5 or apptype is null and xllx=1";
+        String sqlFormat = "SELECT * FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s' and xllx=1 and yxzt=20 and (apptype!=5 or apptype is null) and xllx=1";
         String sql = String.format(sqlFormat, line);
         System.out.println(sql);
         Map<String, String> xlxzmap = new HashMap<String, String>();
