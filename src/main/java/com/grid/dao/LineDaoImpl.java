@@ -238,6 +238,9 @@ public class LineDaoImpl implements LineDao {
         return list;
     }
 
+
+
+
     @Override
     public Map<String, double[][]> ListLinePoints(String line) {
         //查询线路上所有点
@@ -397,6 +400,32 @@ public class LineDaoImpl implements LineDao {
         String ids = String.join(",", users);
         String sql = String.format(sqlFormat, ids);
         jdbcTemplate.update(sql);
+    }
+
+    @Override
+    public Double linelen(String line) {
+        String sqlFormat = "SELECT xlzcd FROM t_sb_zwyc_xl a join t_tx_zwyc_xl b on a.OBJ_ID=b.SBID where OID='%s'";
+        String sql = String.format(sqlFormat, line);
+        System.out.println("******");
+        System.out.println(sql);
+        List<Double> lst = jdbcTemplate.query(sql, new RowMapper<Double>() {
+            //映射每行数据
+            @Override
+            public Double mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Double len = 0.0;
+                if(rs.getDouble("xlzcd")>0.0) {
+                    len = rs.getDouble("xlzcd");
+                }
+                return len;
+            }
+
+            });
+
+        if (lst.size()>0) {
+            System.out.println("查找到线路长度"+","+lst.get(0));
+            return lst.get(0);
+        }
+        return 0.0;
     }
 
     @Override

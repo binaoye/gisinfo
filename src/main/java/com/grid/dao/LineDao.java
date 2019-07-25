@@ -20,6 +20,7 @@ public interface LineDao {
     Map<String,double[][]> ListLinePoints(String line);
     LineFeature QueryLineFeature(String line);
     void deleteUsers(String[] users);
+    Double linelen(String line);
 
     void delUser(String code);
 }

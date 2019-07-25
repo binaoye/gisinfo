@@ -102,4 +102,9 @@ public class LineServiceImpl implements LineService {
     public void delUser(String code) {
         ldao.delUser(code);
     }
+
+    @Override
+    public Double linelen(String line) {
+        return ldao.linelen(line);
+    }
 }
