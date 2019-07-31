@@ -23,7 +23,7 @@ public class LineDaoImpl implements LineDao {
 
     @Override
     public List<LineEntity> QueryLines(String city) {
-        String sql = "SELECT * FROM T_TX_ZWYC_XL where ssds='" + city + "' and xllx=1 and apptype!=5 or apptype is null";
+        String sql = "SELECT * FROM T_TX_ZWYC_XL where ssds='" + city + "' and xllx=1 and (apptype!=5 or apptype is null)";
         List<LineEntity> list = jdbcTemplate.query(sql, new RowMapper<LineEntity>() {
             //映射每行数据
             @Override

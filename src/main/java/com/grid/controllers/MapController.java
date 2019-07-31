@@ -47,9 +47,11 @@ public class MapController {
         }else {
             result.put("result", 1);
         }
+        Double len = lins.linelen(line);
         result.put("lat", dr.getLat());
         result.put("lng", dr.getLng());
         result.put("distance", dr.getDist());
+        result.put("linelen", len);
         return result;
     }
 
@@ -364,8 +366,10 @@ public class MapController {
                             LineUsers lineUsers = new LineUsers();
                             // 查询线路长度
                             Double len = lins.linelen(line);
-                            System.out.println("--------");
-                            System.out.println(len);
+//                            System.out.println("--------");
+//                            System.out.println(len);
+                            System.out.println("用户到线路距离:"+dr.getDist()/1000.0);
+                            System.out.println("线路查询长度为:"+len);
                             lineUsers.setDistance(new BigDecimal(dr.getDist()/1000+len*2+1));
                             if(dr.getDist()<=thres) {
                                 lineUsers.setInside((short)1);
