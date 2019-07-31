@@ -50,8 +50,8 @@ public class MapController {
         Double len = lins.linelen(line);
         result.put("lat", dr.getLat());
         result.put("lng", dr.getLng());
-        result.put("distance", dr.getDist());
-        result.put("linelen", len);
+        result.put("distance", dr.getDist()/1000.0);
+//        result.put("linelen", len);
         return result;
     }
 
